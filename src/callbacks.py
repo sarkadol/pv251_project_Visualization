@@ -5,16 +5,13 @@ import plotly.express as px
 def register_callbacks(app, data_loader):
     @app.callback(
         Output('line-chart', 'figure'),
-        [Input('dataset-dropdown', 'value'),
-         Input('year-slider', 'value')]
+        [Input('year-slider', 'value'),
+         Input('dataset-type-dropdown', 'value')]
     )
-    def update_line_chart(dataset_name, year_range):
-        # Validate dataset selection
-        if not dataset_name or dataset_name not in data_loader.dataframes:
-            return px.line(title="No dataset selected or dataset not found")
-
-        # Get the selected dataset
-        df = data_loader.dataframes[dataset_name]
+    def update_line_chart(year_range,dataset_type):
+        print("updating line chart")
+        # Access the merged V2 DataFrame
+        df = data_loader.get_merged_dataframe(dataset_type)
 
         # Ensure the required columns are present
         if 'Year' not in df.columns or 'RegularMembers' not in df.columns:
@@ -34,4 +31,14 @@ def register_callbacks(app, data_loader):
             title=f"Regular Members Over Time ({year_range[0]}-{year_range[1]})",
             labels={'Year': 'Year', 'RegularMembers': 'Regular Members'}
         )
+        fig.update_xaxes(dtick=1)
         return fig
+
+    @app.callback(
+        Output('dataset-dropdown', 'options'),
+        [Input('dataset-type-dropdown', 'value')]
+    )
+    def update_dataset_dropdown(dataset_type):
+        if dataset_type not in data_loader.dataframes_by_type:
+            return []
+        return [{'label': key, 'value': key} for key in data_loader.dataframes_by_type[dataset_type].keys()]

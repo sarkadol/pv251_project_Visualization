@@ -1,16 +1,19 @@
-# layouts.py
 from dash import dcc, html
 
-def create_layout(dataset_names):
+def create_layout():
     return html.Div([
-        html.H1("Scouts Over the Years", style={'textAlign': 'center'}),
+        html.H1("Scouts Data Visualization", style={'textAlign': 'center'}),
 
-        # Dropdown for selecting datasets
-        html.Label("Select Dataset:"),
+        # Dropdown to select dataset type
+        html.Label("Select Dataset Type:"),
         dcc.Dropdown(
-            id='dataset-dropdown',
-            options=[{'label': name, 'value': name} for name in dataset_names],
-            value=dataset_names[0] if dataset_names else None,  # Default to first dataset
+            id='dataset-type-dropdown',
+            options=[
+                {'label': 'Oddily (O2)', 'value': 'O2'},
+                {'label': 'Strediska (S2)', 'value': 'S2'},
+                {'label': 'Okres/Kraj (V2)', 'value': 'V2'}
+            ],
+            value='V2',  # Default to 'V2' because other still have mistakes
         ),
 
         # Line chart
