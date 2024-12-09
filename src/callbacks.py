@@ -9,7 +9,6 @@ def register_callbacks(app, data_loader):
          Input('dataset-type-dropdown', 'value')]
     )
     def update_line_chart(year_range,dataset_type):
-        print("updating line chart")
         # Access the merged V2 DataFrame
         df = data_loader.get_merged_dataframe(dataset_type)
 

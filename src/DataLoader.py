@@ -1,6 +1,7 @@
 import pandas as pd
 import os
 import chardet
+import io
 
 class DataLoader:
     def __init__(self, directory):
@@ -44,16 +45,18 @@ class DataLoader:
                 try:
                     # Detect encoding
                     encoding = self.detect_encoding(filepath)
-                    #print(f"{filename}: encoding = {encoding}")
+                    print(f"{filename}: encoding = {encoding}")
+
+                    # Read file content with error handling
+                    with open(filepath, 'r', encoding=encoding, errors='replace') as file:
+                        file_content = file.read()
 
                     # Detect delimiter automatically if not specified
                     if delimiter is None:
-                        with open(filepath, 'r', encoding=encoding) as file:
-                            sample = file.read(1024)
-                            delimiter = ',' if ',' in sample else ';'
+                        delimiter = ',' if ',' in file_content[:1024] else ';'
 
-                    # Load the CSV
-                    df = pd.read_csv(filepath, encoding=encoding, delimiter=delimiter)
+                    # Load the CSV using StringIO
+                    df = pd.read_csv(io.StringIO(file_content), delimiter=delimiter)
 
                     # Normalize column names
                     df.columns = df.columns.str.strip()
@@ -65,7 +68,7 @@ class DataLoader:
                     # Store the DataFrame in the appropriate category
                     key = os.path.splitext(filename)[0]
                     self.dataframes_by_type[dataset_type][key] = df
-                    print(f"{filename} loaded successfully.")
+                    #print(f"{filename} loaded successfully.")
 
                 except Exception as e:
                     print(f"{filename} error: {e}")
