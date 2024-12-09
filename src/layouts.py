@@ -20,13 +20,16 @@ def create_layout():
         dcc.Graph(id='line-chart'),
 
         # Slider for filtering years
-        html.Label("Select Year Range:"),
-        dcc.RangeSlider(
+        html.Label("Select Year:"),
+        dcc.Slider(
             id='year-slider',
             min=2016,
             max=2024,
             step=1,
             marks={year: str(year) for year in range(2016, 2025)},
-            value=[2016, 2024]
+            value=2024,  # Default value
+            included=False
         ),
+        # Bar chart for age groups
+        dcc.Graph(id='age-group-bar-chart'),
     ])
