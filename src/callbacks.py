@@ -3,6 +3,9 @@ from dash.dependencies import Input, Output
 import plotly.express as px
 import pandas as pd
 
+from src.utils import create_hierarchy_tree
+
+
 def register_callbacks(app, data_loader):
     # Callback for line chart (already provided)
     @app.callback(
@@ -100,6 +103,80 @@ def register_callbacks(app, data_loader):
             barmode='group'
         )
         return fig
+    # Tree Diagram
+    @app.callback(
+        Output('hierarchy-tree', 'figure'),
+        [Input('year-slider', 'value')]
+    )
+    def update_hierarchy_tree(selected_year):
+        # Load datasets
+        v2_df = data_loader.get_merged_dataframe('V2')
+        s2_df = data_loader.get_merged_dataframe('S2')
+        o2_df = data_loader.get_merged_dataframe('O2')
+
+        # Generate the hierarchy tree
+        return create_hierarchy_tree(v2_df, s2_df, o2_df, selected_year)
+
+
+
+    # Sunburst Chart
+    @app.callback(
+        Output('hierarchy-sunburst', 'figure'),
+        Input('dataset-type-dropdown', 'value')
+    )
+    def update_sunburst(dataset_type):
+        df = data_loader.get_merged_dataframe(dataset_type)
+
+        if 'RegistrationNumber' not in df.columns or 'UnitName' not in df.columns:
+            return px.line(title="Dataset does not have required columns: 'RegistrationNumber' and 'UnitName'")
+
+        df['Hierarchy'] = df['RegistrationNumber'].str.split('.')
+
+        sunburst_data = []
+        for _, row in df.iterrows():
+            levels = row['Hierarchy']
+            for i in range(1, len(levels) + 1):
+                sunburst_data.append({
+                    'ID': '.'.join(levels[:i]),
+                    'Parent': '.'.join(levels[:i - 1]) if i > 1 else '',
+                    'Name': row['UnitName'] if i == len(levels) else ''
+                })
+
+        sunburst_df = pd.DataFrame(sunburst_data)
+        return px.sunburst(sunburst_df, path=['Parent', 'ID'], hover_name='Name', title="Hierarchy Sunburst Chart")
+
+    # Dropdown Filtering
+    @app.callback(
+        [Output('parent-dropdown', 'options'), Output('parent-dropdown', 'value')],
+        Input('dataset-type-dropdown', 'value')
+    )
+    def update_dropdown(dataset_type):
+        df = data_loader.get_merged_dataframe(dataset_type)
+        parent_units = df['RegistrationNumber'].unique()
+        options = [{'label': unit, 'value': unit} for unit in parent_units]
+        return options, options[0]['value'] if options else None
+
+    @app.callback(
+        Output('hierarchy-graph', 'figure'),
+        [Input('parent-dropdown', 'value'), Input('dataset-type-dropdown', 'value')]
+    )
+    def update_hierarchy_graph(selected_parent, dataset_type):
+        df = data_loader.get_merged_dataframe(dataset_type)
+
+        if 'RegistrationNumber' not in df.columns or 'UnitName' not in df.columns or 'Members' not in df.columns:
+            return px.line(title="Dataset does not have required columns: 'RegistrationNumber', 'UnitName', 'Members'")
+
+        filtered_df = df[df['RegistrationNumber'].str.startswith(selected_parent)]
+        return px.bar(filtered_df, x='UnitName', y='Members', title=f"Units under {selected_parent}")
+
+    # Table Display
+    @app.callback(
+        Output('hierarchy-table', 'data'),
+        Input('dataset-type-dropdown', 'value')
+    )
+    def update_table(dataset_type):
+        df = data_loader.get_merged_dataframe(dataset_type)
+        return df.to_dict('records')
 
 
 
