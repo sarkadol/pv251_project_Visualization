@@ -11,22 +11,19 @@ class DataLoader:
             'S2': {},
             'V2': {}
         }
-        self.merged_dataframes = {
-            'O2': None,
-            'S2': None,
-            'V2': None
-        }
+        self.merged_dataframe = None  # Store the merged DataFrame
+
 
     def detect_encoding(self, file_path):
-        """Detect the encoding of a file using chardet."""
-        with open(file_path, 'rb') as f:
-            data = f.read()
-            encoding_result = chardet.detect(data)
-            return encoding_result.get('encoding', 'utf-8')  # Default to 'utf-8' if detection fails
+            """Detect the encoding of a file using chardet."""
+            with open(file_path, 'rb') as f:
+                data = f.read()
+                encoding_result = chardet.detect(data)
+                return encoding_result.get('encoding', 'utf-8')  # Default to 'utf-8' if detection fails
 
     def load_all_csvs(self, delimiter=None):
         """
-        Load all CSV files, categorize them by type, and optionally merge them.
+        Load all CSV files, categorize them by type.
         """
         for filename in os.listdir(self.directory):
             if filename.endswith('.csv'):
@@ -68,26 +65,9 @@ class DataLoader:
                     # Store the DataFrame in the appropriate category
                     key = os.path.splitext(filename)[0]
                     self.dataframes_by_type[dataset_type][key] = df
-                    #print(f"{filename} loaded successfully.")
 
                 except Exception as e:
                     print(f"{filename} error: {e}")
-
-        # Merge datasets of each type
-        for dataset_type, dataframes in self.dataframes_by_type.items():
-            if dataframes:
-                self.merged_dataframes[dataset_type] = pd.concat(dataframes.values(), ignore_index=True)
-        return self.dataframes_by_type  # Return the categorized datasets
-
-
-    def get_merged_dataframe(self, dataset_type):
-        """
-        Get the merged DataFrame for a specific dataset type.
-        """
-        if dataset_type in self.merged_dataframes:
-            return self.merged_dataframes[dataset_type]
-        else:
-            raise ValueError(f"Dataset type '{dataset_type}' not recognized.")
 
     def get_preview(self, key=None, dataset_type=None, rows=5):
         """
@@ -133,3 +113,40 @@ class DataLoader:
                     #print(df.dtypes)  # Print the data types of each column
                     print("\nPreview:")
                     print(df.head(rows))  # Print the first 'rows' rows of the dataset
+
+    def normalize_and_merge(self):
+        """
+        Normalize column names, add a dataset type column, and merge all datasets into one DataFrame.
+        Returns:
+            A single merged DataFrame containing all datasets.
+        """
+        merged_data = []
+
+        # Loop through all dataset types and their respective datasets
+        for dataset_type, datasets in self.dataframes_by_type.items():
+            for dataset_key, df in datasets.items():
+                # Normalize column names (e.g., rename 'DisplayName' to 'UnitName')
+                df = df.rename(columns={'DisplayName': 'UnitName'})
+
+                # Add a column specifying the dataset type (e.g., V2, S2, O2)
+                df['DatasetType'] = dataset_type
+
+                # Append to the list for merging
+                merged_data.append(df)
+
+        # Concatenate all normalized DataFrames into one
+        if merged_data:
+            self.merged_dataframe = pd.concat(merged_data, ignore_index=True)
+            print("All datasets have been normalized and merged successfully.")
+        else:
+            print("No datasets available to merge.")
+            return pd.DataFrame()  # Return an empty DataFrame if no data is available
+
+    def get_merged_dataframe(self):
+        """
+        Retrieve the merged DataFrame.
+        """
+        if self.merged_dataframe is None:
+            print("Merged DataFrame is not available. Please run normalize_and_merge() first.")
+            return pd.DataFrame()  # Return an empty DataFrame if not available
+        return self.merged_dataframe

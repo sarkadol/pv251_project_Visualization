@@ -31,41 +31,6 @@ def create_layout():
             included=False
         ),
         # Bar chart for age groups
-        dcc.Graph(id='age-group-bar-chart'),
-        html.Hr(),
+        dcc.Graph(id='age-group-bar-chart')
 
-        # Tree diagram
-        html.H3("Hierarchy - Tree Diagram"),
-        dcc.Graph(id='hierarchy-tree'),
-
-        html.Hr(),
-
-        # Sunburst chart
-        html.H3("Hierarchy - Sunburst Chart"),
-        dcc.Graph(id='hierarchy-sunburst'),
-
-        html.Hr(),
-
-        # Dropdown for hierarchy filtering
-        html.H3("Hierarchy - Dropdown Filtering"),
-        html.Label("Select Parent Unit:"),
-        dcc.Dropdown(id='parent-dropdown', options=[], value=None),
-        dcc.Graph(id='hierarchy-graph'),
-
-        html.Hr(),
-
-        # Table for hierarchy display
-        html.H3("Hierarchy - Tabular Display"),
-        dash_table.DataTable(
-            id='hierarchy-table',
-            columns=[
-                {'name': 'Year', 'id': 'Year'},
-                {'name': 'Registration Number', 'id': 'RegistrationNumber'},
-                {'name': 'Unit Name', 'id': 'UnitName'},
-                {'name': 'Members', 'id': 'Members'}
-            ],
-            page_size=10,
-            filter_action='native',
-            sort_action='native'
-        )
     ])
