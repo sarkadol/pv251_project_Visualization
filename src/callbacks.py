@@ -1,6 +1,8 @@
 from dash.dependencies import Input, Output
 import plotly.express as px
 import pandas as pd
+from plotly.graph_objects import Figure, Scatter
+
 
 def register_callbacks(app, merged_dataframe):
     # Line chart callback
@@ -95,5 +97,36 @@ def register_callbacks(app, merged_dataframe):
         )
         return fig
 
+    @app.callback(
+        Output('hierarchy-treemap', 'figure'),
+        [Input('year-slider', 'value')]
+    )
+    def update_hierarchy_treemap(selected_year):
+        # Filter the data based on dataset type and year
+        df = merged_dataframe[
+            (merged_dataframe['Year'] == selected_year)
+            ].copy()  # Work on a copy to avoid modifying the original DataFrame
 
+        # Ensure required columns are present
+        if 'RegistrationNumber' not in df.columns or 'UnitName' not in df.columns or 'Members' not in df.columns:
+            return px.treemap(title="Dataset does not have required columns: 'RegistrationNumber', 'UnitName', and 'Members'")
 
+        # Split RegistrationNumber into hierarchy levels safely
+        df['Level1'] = df['RegistrationNumber'].str.split('.').apply(lambda x: x[0] if len(x) > 0 else None)
+        df['Level2'] = df['RegistrationNumber'].str.split('.').apply(lambda x: x[1] if len(x) > 1 else None)
+        df['Level3'] = df['RegistrationNumber'].str.split('.').apply(lambda x: x[2] if len(x) > 2 else None)
+        print(df.head())
+        print(df.columns.tolist())
+
+        # Replace NaN with an empty string for levels without children
+        df.fillna('', inplace=True)
+
+        # Create the treemap
+        fig = px.treemap(
+            df,
+            path=['Level1', 'Level2', 'Level3', 'UnitName'],  # Define hierarchy levels
+            values='Members',                                # Use 'Members' as the size of rectangles
+            title=f"Hierarchy Treemap for year {selected_year}",
+            labels={'Members': 'Number of Members'}
+        )
+        return fig

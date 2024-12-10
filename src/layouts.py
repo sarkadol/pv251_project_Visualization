@@ -17,7 +17,13 @@ def create_layout():
         ),
 
         # Line chart
-        dcc.Graph(id='line-chart'),
+        dcc.Loading(
+            id="loading-hierarchy-treemap",
+            type="circle",  # Spinner type: "default", "circle", or "dot"
+            children=[
+                dcc.Graph(id='line-chart')
+            ]
+        ),
 
         # Slider for filtering years
         html.Label("Select Year:"),
@@ -31,6 +37,22 @@ def create_layout():
             included=False
         ),
         # Bar chart for age groups
-        dcc.Graph(id='age-group-bar-chart')
+        dcc.Loading(
+            id="loading-hierarchy-treemap",
+            type="circle",  # Spinner type: "default", "circle", or "dot"
+            children=[
+                dcc.Graph(id='age-group-bar-chart')
+            ]
+        ),
+        html.Hr(),
 
+        # Treemap wrapped with dcc.Loading
+        html.H3("Hierarchy - Treemap"),
+        dcc.Loading(
+            id="loading-hierarchy-treemap",
+            type="circle",  # Spinner type: "default", "circle", or "dot"
+            children=[
+                dcc.Graph(id='hierarchy-treemap')
+            ]
+        ),
     ])

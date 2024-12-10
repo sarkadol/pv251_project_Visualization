@@ -9,8 +9,9 @@ data_loader = DataLoader(data_directory)
 dataframes = data_loader.load_all_csvs()  # Load datasets
 data_loader.normalize_and_merge()
 merged_dataframe = data_loader.get_merged_dataframe()
-print(merged_dataframe.head())
-print(merged_dataframe.tail())
+print("head",merged_dataframe.head())
+print("tail",merged_dataframe.tail())
+print("length",len(merged_dataframe))
 
 
 # Data types preview
