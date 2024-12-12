@@ -21,11 +21,13 @@ print("length",len(merged_dataframe))
 #print(data_loader.get_merged_dataframe('V2'))
 
 # Initialize Dash app
-app = Dash(__name__)
+app = Dash(__name__, assets_folder='assets')
 app.layout = create_layout()  # Pass dataset names to the layout
 
 # Register callbacks
 register_callbacks(app, merged_dataframe)  # Register the callbacks and pass the DataLoader instance
+#app.css.append_css({"external_url": "/assets/styles.css"})
+
 
 if __name__ == '__main__':
     app.run_server(debug=True)

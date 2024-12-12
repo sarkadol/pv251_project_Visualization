@@ -1,58 +1,82 @@
-from dash import dcc, html, dash_table
+from dash import dcc, html
 
 def create_layout():
-    return html.Div([
-        html.H1("Scouts Data Visualization", style={'textAlign': 'center'}),
+    return html.Div(
+        className="main-container",
+        children=[
+            html.H1("Scouts Data Visualization"),
 
-        # Dropdown to select dataset type
-        html.Label("Select Dataset Type:"),
-        dcc.Dropdown(
-            id='dataset-type-dropdown',
-            options=[
-                {'label': 'Oddily (O2)', 'value': 'O2'},
-                {'label': 'Strediska (S2)', 'value': 'S2'},
-                {'label': 'Okres/Kraj (V2)', 'value': 'V2'}
-            ],
-            value='V2',  # Default to 'V2' because other still have mistakes
-        ),
+            html.Div(
+                className="dropdown-container",
+                children=[
+                    html.Label("Select Dataset Type:"),
+                    dcc.Dropdown(
+                        id='dataset-type-dropdown',
+                        options=[
+                            {'label': 'Oddily (O2)', 'value': 'O2'},
+                            {'label': 'Strediska (S2)', 'value': 'S2'},
+                            {'label': 'Okres/Kraj (V2)', 'value': 'V2'}
+                        ],
+                        value='V2',
+                        className="dropdown"
+                    ),
+                ]
+            ),
 
-        # Line chart
-        dcc.Loading(
-            id="loading-hierarchy-treemap",
-            type="circle",  # Spinner type: "default", "circle", or "dot"
-            children=[
-                dcc.Graph(id='line-chart')
-            ]
-        ),
+            html.Div(
+                className="chart-container",
+                children=[
+                    html.Label("Total Over the Years:"),
+                    dcc.Loading(
+                        id="loading-line-chart",
+                        type="circle",
+                        children=[dcc.Graph(id='line-chart', className="graph")]
+                    )
+                ]
+            ),
 
-        # Slider for filtering years
-        html.Label("Select Year:"),
-        dcc.Slider(
-            id='year-slider',
-            min=2016,
-            max=2024,
-            step=1,
-            marks={year: str(year) for year in range(2016, 2025)},
-            value=2024,  # Default value
-            included=False
-        ),
-        # Bar chart for age groups
-        dcc.Loading(
-            id="loading-hierarchy-treemap",
-            type="circle",  # Spinner type: "default", "circle", or "dot"
-            children=[
-                dcc.Graph(id='age-group-bar-chart')
-            ]
-        ),
-        html.Hr(),
+            html.Div(
+                className="slider-container",
+                children=[
+                    html.Label("Select Year:"),
+                    dcc.Slider(
+                        id='year-slider',
+                        min=2016,
+                        max=2024,
+                        step=1,
+                        marks={year: str(year) for year in range(2016, 2025)},
+                        value=2024,
+                        included=False,
+                        tooltip={"placement": "bottom", "always_visible": True},
+                        className="slider"
+                    )
+                ]
+            ),
 
-        # Treemap wrapped with dcc.Loading
-        html.H3("Hierarchy - Treemap"),
-        dcc.Loading(
-            id="loading-hierarchy-treemap",
-            type="circle",  # Spinner type: "default", "circle", or "dot"
-            children=[
-                dcc.Graph(id='hierarchy-treemap')
-            ]
-        ),
-    ])
+            html.Div(
+                className="chart-container",
+                children=[
+                    html.Label("Age Group Distribution:"),
+                    dcc.Loading(
+                        id="loading-age-group-bar-chart",
+                        type="circle",
+                        children=[dcc.Graph(id='age-group-bar-chart', className="graph")]
+                    )
+                ]
+            ),
+
+            html.Hr(),
+
+            html.Div(
+                className="chart-container",
+                children=[
+                    html.H3("Hierarchy - Treemap"),
+                    dcc.Loading(
+                        id="loading-hierarchy-treemap",
+                        type="circle",
+                        children=[dcc.Graph(id='hierarchy-treemap', className="graph")]
+                    )
+                ]
+            )
+        ]
+    )

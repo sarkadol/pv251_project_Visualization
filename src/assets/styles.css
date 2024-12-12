@@ -1,0 +1,173 @@
+/* General body styling */
+body {
+    font-family: var(--font-secondary, Arial, sans-serif);
+    margin: 0;
+    padding: 0;
+    background-color: var(--light-bg); /* Light background */
+    color: var(--text-color); /* Consistent text color */
+}
+
+/* Color palette */
+:root {
+    /* Blues */
+    --blue-primary: #3979B5; /* Main blue */
+    --blue-secondary: #255C9E; /* Darker blue */
+    --blue-accent: #294885; /* Accent blue */
+
+    /* Oranges */
+    --orange-primary: #F9B200; /* Main orange */
+    --orange-secondary: #F49E00; /* Secondary orange */
+
+    /* Neutral colors */
+    --white: #FFFFFF;
+    --black: #000000;
+
+    /* Typography */
+    --font-primary: 'SKAUT Bold', Arial, sans-serif;
+    --font-secondary: 'TheMix', Verdana, sans-serif;
+
+    /* Text sizes */
+    --font-size-title: 24px;
+    --font-size-subtitle: 18px;
+    --font-size-body: 16px;
+
+    /* Helper colors */
+    --primary-color: var(--blue-primary);
+    --secondary-color: var(--blue-secondary);
+    --accent-color: var(--orange-primary);
+    --light-bg: #f9f9f9;
+    --text-color: #333;
+}
+
+/* Font-face definitions */
+@font-face {
+    font-family: 'SKAUT Bold';
+    src: url('fonts/SKAUT-Bold.otf') format('opentype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'TheMix';
+    src: url('fonts/TheMixC5-4_SemiLight.otf') format('opentype'),
+    url('fonts/TheMixC5-7_Bold.otf') format('opentype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+/* Header styling */
+h1, h2, h3 {
+    font-family: var(--font-primary);
+    color: var(--primary-color);
+    text-align: center;
+    margin: 20px 0; /* Shorthand applied */
+}
+
+/* Labels and text elements */
+label {
+    font-weight: bold;
+    color: var(--text-color);
+    font-family: var(--font-secondary);
+}
+
+/* Dropdown styling */
+.dropdown {
+    width: 50%;
+    margin: 0 auto 10px; /* Shorthand applied */
+    border: 1px solid var(--secondary-color);
+    border-radius: 5px;
+}
+
+/* Chart styling */
+.graph {
+    height: 400px;
+    margin: 0 auto; /* Shorthand applied */
+    border: 2px solid var(--secondary-color);
+    border-radius: 8px;
+    background-color: var(--white);
+}
+
+/* Slider styling */
+.slider .rc-slider-track {
+    background-color: var(--accent-color);
+}
+
+.slider .rc-slider-handle {
+    border: 2px solid var(--accent-color);
+    box-shadow: none;
+}
+
+/* Loading spinner styling */
+.dash-spinner {
+    color: var(--accent-color);
+}
+
+/* Containers */
+.container {
+    padding: 20px;
+    border-radius: 10px;
+    background-color: var(--blue-accent);
+    color: var(--white);
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+}
+
+.rounded-box {
+    border: 2px solid var(--secondary-color);
+    border-radius: 15px;
+    padding: 20px;
+    background-color: var(--white);
+    color: var(--blue-secondary);
+}
+
+/* Buttons */
+button {
+    background-color: var(--orange-primary);
+    border: none;
+    border-radius: 5px;
+    color: var(--white);
+    font-family: var(--font-primary);
+    font-size: var(--font-size-body);
+    padding: 10px 20px;
+    cursor: pointer;
+    transition: background-color 0.3s ease; /* Smooth hover transition */
+}
+
+button:hover {
+    background-color: var(--orange-secondary);
+}
+
+/* Links */
+a {
+    color: var(--blue-primary);
+    text-decoration: none;
+    font-family: var(--font-secondary);
+}
+
+a:hover {
+    color: var(--orange-primary);
+}
+
+/* Spacing utilities */
+.mt-10 {
+    margin-top: 10px;
+}
+
+.mb-10 {
+    margin-bottom: 10px;
+}
+
+/* General graph styling */
+.graph {
+    background-color: var(--white); /* Set a white background */
+    border: 2px solid var(--secondary-color); /* Add a border */
+    border-radius: 10px; /* Round the corners */
+    padding: 20px; /* Add internal padding */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Add a shadow */
+}
+
+/* Customize chart containers */
+.chart-container {
+    margin: 20px auto; /* Add vertical spacing and center the container */
+    width: 80%; /* Restrict the width */
+}
+
