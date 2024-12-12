@@ -2,6 +2,7 @@ from dash import Dash
 from DataLoader import DataLoader
 from layouts import create_layout
 from callbacks import register_callbacks
+from src.utils import add_hierarchy_levels
 
 # Initialize DataLoader
 data_directory = '../data'
@@ -9,9 +10,11 @@ data_loader = DataLoader(data_directory)
 dataframes = data_loader.load_all_csvs()  # Load datasets
 data_loader.normalize_and_merge()
 merged_dataframe = data_loader.get_merged_dataframe()
+merged_dataframe = add_hierarchy_levels(merged_dataframe)
+
 print("head",merged_dataframe.head())
 print("tail",merged_dataframe.tail())
-print("length",len(merged_dataframe))
+print("length of merged dataframe: ",len(merged_dataframe))
 
 
 # Data types preview
