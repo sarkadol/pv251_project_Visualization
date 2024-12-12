@@ -34,6 +34,6 @@ app.layout = create_layout(merged_dataframe)  # Pass dataset names to the layout
 
 if __name__ == '__main__':
     print("Registering callbacks...")
-    #register_callbacks(app, merged_dataframe)
+    register_callbacks(app, merged_dataframe)
     print("Callbacks registered successfully.")
     app.run_server(debug=True)

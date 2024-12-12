@@ -105,10 +105,10 @@ def register_callbacks(app, merged_dataframe):
             barmode='group'
         )
         return fig
-
+"""
     @app.callback(
         Output('hierarchy-treemap', 'figure'),
         [Input('year-slider', 'value')]
     )
     def update_hierarchy_treemap(selected_year):
-        pass
+        pass"""

@@ -24,11 +24,13 @@ def create_layout(merged_dataframe):
                     dcc.Dropdown(
                         id='level0-dropdown',
                         options=[
-                            {'label': unit_name, 'value': level0}
-                            for level0, unit_name in merged_dataframe[
+                                    {'label': 'ALL', 'value': 'ALL'}  # Add the "ALL" option here
+                                ] + [
+                                    {'label': unit_name, 'value': registration_number}
+                                    for registration_number, unit_name in merged_dataframe[
                                 merged_dataframe['ID_UnitType'] == "kraj"  # Filter rows where ID_UnitType equals "kraj"
-                                ][['Level0', 'UnitName']].drop_duplicates().values
-                        ],
+                                ][['RegistrationNumber', 'UnitName']].drop_duplicates().values
+                                ],
                         placeholder="Select a Level0 region",
                         multi=False,
                         clearable=True
@@ -38,10 +40,12 @@ def create_layout(merged_dataframe):
                     dcc.Dropdown(
                         id='level1-dropdown',
                         options=[
-                            {'label': unit_name, 'value': level1}
-                            for level1, unit_name in merged_dataframe[
+                                    {'label': 'ALL', 'value': 'ALL'}  # Add the "ALL" option here
+                                ] + [
+                            {'label': unit_name, 'value': registration_number}
+                            for registration_number, unit_name in merged_dataframe[
                                 merged_dataframe['ID_UnitType'] == "okres"  # Filter rows where ID_UnitType equals "okres"
-                                ][['Level1', 'UnitName']].drop_duplicates().values
+                                ][['RegistrationNumber', 'UnitName']].drop_duplicates().values
                         ],
                         placeholder="Select a Level1 (Okres)",
                         multi=False,
@@ -52,10 +56,12 @@ def create_layout(merged_dataframe):
                     dcc.Dropdown(
                         id='level2-dropdown',
                         options=[
-                            {'label': unit_name, 'value': level2}
-                            for level2, unit_name in merged_dataframe[
+                                    {'label': 'ALL', 'value': 'ALL'}  # Add the "ALL" option here
+                                ] + [
+                            {'label': unit_name, 'value': registration_number}
+                            for registration_number, unit_name in merged_dataframe[
                                 merged_dataframe['ID_UnitType'] == "stredisko"  # Filter rows where ID_UnitType equals "stredisko"
-                                ][['Level2', 'UnitName']].drop_duplicates().values
+                                ][['RegistrationNumber', 'UnitName']].drop_duplicates().values
                         ],
                         placeholder="Select a Level2 (Stredisko)",
                         multi=False,
@@ -66,15 +72,18 @@ def create_layout(merged_dataframe):
                     dcc.Dropdown(
                         id='level3-dropdown',
                         options=[
-                            {'label': unit_name, 'value': level3}
-                            for level3, unit_name in merged_dataframe[
+                                    {'label': 'ALL', 'value': 'ALL'}  # Add the "ALL" option here
+                                ] + [
+                            {'label': unit_name, 'value': registration_number}
+                            for registration_number, unit_name in merged_dataframe[
                                 merged_dataframe['ID_UnitType'] == "oddil"  # Filter rows where ID_UnitType equals "oddíl"
-                                ][['Level3', 'UnitName']].drop_duplicates().values
+                                ][['RegistrationNumber', 'UnitName']].drop_duplicates().values
                         ],
                         placeholder="Select a Level3 (Oddíl)",
                         multi=False,
                         clearable=True
                     ),
+
 
 
                 ]
