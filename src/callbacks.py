@@ -1,8 +1,6 @@
 from dash.dependencies import Input, Output
 import plotly.express as px
 import pandas as pd
-from plotly.graph_objects import Figure, Scatter
-
 
 def register_callbacks(app, merged_dataframe):
     # Line chart callback
@@ -197,3 +195,31 @@ def register_callbacks(app, merged_dataframe):
 
         # If "ALL" is selected, reset all values to "ALL"
         return level1_options, level2_options, level3_options, 'ALL', 'ALL', 'ALL'
+
+    @app.callback(
+        Output('hierarchy-treemap', 'figure'),
+        Input('loading-hierarchy-treemap', 'children')  # Placeholder trigger
+    )
+    def generate_dynamic_treemap(_):
+        """
+        Create a static hierarchy treemap from the DataFrame with hierarchy levels.
+        """
+        # Validate DataFrame columns
+        if 'Level0' not in merged_dataframe.columns or 'RegularMembers' not in merged_dataframe.columns:
+            raise ValueError("Merged DataFrame missing required columns: 'Level0' or 'RegularMembers'")
+
+        # Debug DataFrame preview
+        print("Merged DataFrame Preview:")
+        print(merged_dataframe[['Level0', 'Level1', 'Level2', 'Level3', 'UnitName', 'RegularMembers']].head())
+
+
+        fig = px.treemap(
+            merged_dataframe,
+            path=[px.Constant("All"), 'Level0', 'Level1', 'Level2'],  # Adjust hierarchy
+            values='RegularMembers',  # Use the column representing the size
+            title="Static Hierarchy Treemap",
+            hover_name='UnitName',
+            labels={'Members': 'Number of Members'},
+        )
+
+        return fig

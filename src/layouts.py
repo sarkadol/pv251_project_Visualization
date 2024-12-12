@@ -136,6 +136,7 @@ def create_layout(merged_dataframe):
             ),
 
             html.Hr(),
+            html.Div(id="treemap-trigger", children="initial"),  # This serves as the Input
 
             html.Div(
                 className="chart-container",
@@ -144,7 +145,9 @@ def create_layout(merged_dataframe):
                     dcc.Loading(
                         id="loading-hierarchy-treemap",
                         type="circle",
-                        children=[dcc.Graph(id='hierarchy-treemap', className="graph")]
+                        children=[
+                            dcc.Graph(id='hierarchy-treemap', className="graph")
+                        ]
                     )
                 ]
             )
