@@ -31,6 +31,7 @@ def create_layout(merged_dataframe):
                                 merged_dataframe['ID_UnitType'] == "kraj"  # Filter rows where ID_UnitType equals "kraj"
                                 ][['RegistrationNumber', 'UnitName']].drop_duplicates().values
                                 ],
+                        value='ALL',
                         placeholder="Select a Level0 region",
                         multi=False,
                         clearable=True
@@ -47,6 +48,7 @@ def create_layout(merged_dataframe):
                                 merged_dataframe['ID_UnitType'] == "okres"  # Filter rows where ID_UnitType equals "okres"
                                 ][['RegistrationNumber', 'UnitName']].drop_duplicates().values
                         ],
+                        value='ALL',
                         placeholder="Select a Level1 (Okres)",
                         multi=False,
                         clearable=True
@@ -63,6 +65,7 @@ def create_layout(merged_dataframe):
                                 merged_dataframe['ID_UnitType'] == "stredisko"  # Filter rows where ID_UnitType equals "stredisko"
                                 ][['RegistrationNumber', 'UnitName']].drop_duplicates().values
                         ],
+                        value='ALL',
                         placeholder="Select a Level2 (Stredisko)",
                         multi=False,
                         clearable=True
@@ -79,6 +82,7 @@ def create_layout(merged_dataframe):
                                 merged_dataframe['ID_UnitType'] == "oddil"  # Filter rows where ID_UnitType equals "oddíl"
                                 ][['RegistrationNumber', 'UnitName']].drop_duplicates().values
                         ],
+                        value='ALL',
                         placeholder="Select a Level3 (Oddíl)",
                         multi=False,
                         clearable=True

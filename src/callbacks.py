@@ -9,34 +9,41 @@ def register_callbacks(app, merged_dataframe):
     @app.callback(
         Output('line-chart', 'figure'),
         [Input('year-slider', 'value'),
-         Input('dataset-type-dropdown', 'value'),
          Input('level0-dropdown', 'value')]
     )
-    def update_line_chart(selected_year, dataset_type,level0_value):
-        # Filter data based on dataset type
-        df = merged_dataframe
-        yaxis_range = [0, merged_dataframe['RegularMembers'].max()]
+    def update_line_chart(selected_year, level0_value):
+        # Start with the full dataset
+        df = merged_dataframe.copy()
 
+        # Debug print
+        print(f"Selected year: {selected_year}")
+        print(f"Selected Level0: {level0_value}")
 
-    # Further filter data based on Level0 if a value is selected
-        if level0_value:
-            df = df[df['Level0'] == level0_value]
-            #yaxis_range = [0, df['RegularMembers'].max()]
+        # Further filter data based on Level0 if a value is selected
+        if level0_value and level0_value != 'ALL':
+            df = df[df['RegistrationNumber'].str[:2] == level0_value[:2]]  # Correct filtering
 
-
-    # Ensure required columns are present
-        if 'Year' not in df.columns or 'RegularMembers' not in df.columns:
-            return px.line(title="Dataset does not have required columns: 'Year' and 'RegularMembers'")
+        # Ensure required columns are present
+        #if 'Year' not in df.columns or 'RegularMembers' not in df.columns:
+        #    return px.line(title="Dataset does not have required columns: 'Year' and 'RegularMembers'")
 
         # Aggregate RegularMembers by year
         df_grouped = df.groupby('Year', as_index=False)['RegularMembers'].sum()
 
-    # Create the line chart
+
+        # Determine the dynamic title
+        if level0_value == 'ALL' or not level0_value:
+            title = "Regular Members Over Time (All Regions)"
+        else:
+            title = f"Regular Members Over Time ({level0_value})"  # Fallback to raw value if no match
+
+
+        # Create the line chart
         fig = px.line(
             df_grouped,
             x='Year',
             y='RegularMembers',
-            title="Regular Members Over Time",
+            title=title,
             labels={'Year': 'Year', 'RegularMembers': 'Regular Members'}
         )
 
@@ -50,7 +57,7 @@ def register_callbacks(app, merged_dataframe):
                 marker=dict(size=12, color='red', symbol='circle')
             )
 
-        # Ensure consistent x-axis
+        # Ensure consistent x-axis and y-axis range
         fig.update_traces(line=dict(width=3))
         fig.update_layout(
             xaxis=dict(dtick=1),
@@ -58,7 +65,6 @@ def register_callbacks(app, merged_dataframe):
             title_x=0.5
         )
         return fig
-
     # Bar chart for age groups callback
     @app.callback(
         Output('age-group-bar-chart', 'figure'),
@@ -163,7 +169,7 @@ def register_callbacks(app, merged_dataframe):
             filtered_level1 = df[
                 (df['RegistrationNumber'].str[:2] == first_two_digits) & (df['ID_UnitType'] == "okres")
                 ]
-            print(f"Filtered Level1 options:\n{filtered_level1}")
+            #print(f"Filtered Level1 options:\n{filtered_level1}")
             level1_options += [
                 {'label': unit_name, 'value': registration_number}
                 for registration_number, unit_name in filtered_level1[['RegistrationNumber', 'UnitName']].drop_duplicates().values
@@ -173,7 +179,7 @@ def register_callbacks(app, merged_dataframe):
             filtered_level2 = df[
                 (df['RegistrationNumber'].str[:2] == first_two_digits) & (df['ID_UnitType'] == "stredisko")
                 ]
-            print(f"Filtered Level2 options:\n{filtered_level2}")
+            #print(f"Filtered Level2 options:\n{filtered_level2}")
             level2_options += [
                 {'label': unit_name, 'value': registration_number}
                 for registration_number, unit_name in filtered_level2[['RegistrationNumber', 'UnitName']].drop_duplicates().values
@@ -183,7 +189,7 @@ def register_callbacks(app, merged_dataframe):
             filtered_level3 = df[
                 (df['RegistrationNumber'].str[:2] == first_two_digits) & (df['ID_UnitType'] == "oddil")
                 ]
-            print(f"Filtered Level3 options:\n{filtered_level3}")
+            #print(f"Filtered Level3 options:\n{filtered_level3}")
             level3_options += [
                 {'label': unit_name, 'value': registration_number}
                 for registration_number, unit_name in filtered_level3[['RegistrationNumber', 'UnitName']].drop_duplicates().values
