@@ -75,6 +75,29 @@ def register_callbacks(app, merged_dataframe):
         # Ensure required columns are present
         required_columns = ['MembersTo6', 'MembersTo15', 'MembersTo18', 'MembersTo26', 'MembersFrom26']
         if not all(col in df.columns for col in required_columns):
+            """
+    if level0_value and level0_value != 'ALL':
+        # Filter Level1 options based on Level0
+        level1_options += [
+            {'label': unit_name, 'value': registration_number}
+            for registration_number, unit_name in df[
+                df['RegistrationNumber'].str.startswith(level0_value) & (df['ID_UnitType'] == "okres")
+                ][['RegistrationNumber', 'UnitName']].drop_duplicates().values
+        ]
+
+    # Filter Level2 options based on Level0
+    level2_options += [
+        {'label': unit_name, 'value': registration_number}
+        for registration_number, unit_name in df[
+            df['RegistrationNumber'].str.startswith(level0_value) & (df['ID_UnitType'] == "stredisko")
+            ][['RegistrationNumber', 'UnitName']].drop_duplicates().values
+    ]
+        @app.callback(
+            Output('hierarchy-treemap', 'figure'),
+            [Input('year-slider', 'value')]
+        )
+        def update_hierarchy_treemap(selected_year):
+            pass"""
             return px.bar(title="Dataset does not have required columns for age groups.")
 
         # Aggregate data for age groups
@@ -105,10 +128,66 @@ def register_callbacks(app, merged_dataframe):
             barmode='group'
         )
         return fig
-"""
+
     @app.callback(
-        Output('hierarchy-treemap', 'figure'),
-        [Input('year-slider', 'value')]
+        [
+            Output('level1-dropdown', 'options'),
+            Output('level2-dropdown', 'options'),
+            Output('level3-dropdown', 'options'),
+            Output('level1-dropdown', 'value'),
+            Output('level2-dropdown', 'value'),
+            Output('level3-dropdown', 'value'),
+        ],
+        [
+            Input('level0-dropdown', 'value')
+        ]
     )
-    def update_hierarchy_treemap(selected_year):
-        pass"""
+    def update_from_level0(level0_value):
+        # Start with the full dataset
+        df = merged_dataframe.copy()
+
+        # Debug prints for Level0 value
+        print(f"Selected Level0: {level0_value}")
+
+        # Default options for Level1, Level2, and Level3
+        level1_options = [{'label': 'ALL', 'value': 'ALL'}]
+        level2_options = [{'label': 'ALL', 'value': 'ALL'}]
+        level3_options = [{'label': 'ALL', 'value': 'ALL'}]
+
+        if level0_value and level0_value != 'ALL':
+            # Match first two characters of RegistrationNumber
+            first_two_digits = level0_value[:2]
+            print(f"Filtering for first two digits: {first_two_digits}")
+
+            # Filter Level1 using the first two characters of RegistrationNumber
+            filtered_level1 = df[
+                (df['RegistrationNumber'].str[:2] == first_two_digits) & (df['ID_UnitType'] == "okres")
+                ]
+            print(f"Filtered Level1 options:\n{filtered_level1}")
+            level1_options += [
+                {'label': unit_name, 'value': registration_number}
+                for registration_number, unit_name in filtered_level1[['RegistrationNumber', 'UnitName']].drop_duplicates().values
+            ]
+
+            # Filter Level2 using the first two characters of RegistrationNumber
+            filtered_level2 = df[
+                (df['RegistrationNumber'].str[:2] == first_two_digits) & (df['ID_UnitType'] == "stredisko")
+                ]
+            print(f"Filtered Level2 options:\n{filtered_level2}")
+            level2_options += [
+                {'label': unit_name, 'value': registration_number}
+                for registration_number, unit_name in filtered_level2[['RegistrationNumber', 'UnitName']].drop_duplicates().values
+            ]
+
+            # Filter Level3 using the first two characters of RegistrationNumber
+            filtered_level3 = df[
+                (df['RegistrationNumber'].str[:2] == first_two_digits) & (df['ID_UnitType'] == "oddil")
+                ]
+            print(f"Filtered Level3 options:\n{filtered_level3}")
+            level3_options += [
+                {'label': unit_name, 'value': registration_number}
+                for registration_number, unit_name in filtered_level3[['RegistrationNumber', 'UnitName']].drop_duplicates().values
+            ]
+
+        # If "ALL" is selected, reset all values to "ALL"
+        return level1_options, level2_options, level3_options, 'ALL', 'ALL', 'ALL'
