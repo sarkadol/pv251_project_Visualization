@@ -2,7 +2,7 @@ from dash import Dash
 from DataLoader import DataLoader
 from layouts import create_layout
 from callbacks import register_callbacks
-from src.utils import add_hierarchy_levels
+from utils import add_hierarchy_levels
 
 # Initialize DataLoader
 data_directory = '../data'
@@ -25,7 +25,7 @@ print("length of merged dataframe: ",len(merged_dataframe))
 
 # Initialize Dash app
 app = Dash(__name__, assets_folder='assets')
-app.layout = create_layout()  # Pass dataset names to the layout
+app.layout = create_layout(merged_dataframe)  # Pass dataset names to the layout
 
 # Register callbacks
 register_callbacks(app, merged_dataframe)  # Register the callbacks and pass the DataLoader instance

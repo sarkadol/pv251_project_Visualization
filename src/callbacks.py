@@ -9,11 +9,16 @@ def register_callbacks(app, merged_dataframe):
     @app.callback(
         Output('line-chart', 'figure'),
         [Input('year-slider', 'value'),
-         Input('dataset-type-dropdown', 'value')]
+         Input('dataset-type-dropdown', 'value'),
+         Input('level0-dropdown', 'value')]
     )
-    def update_line_chart(selected_year, dataset_type):
+    def update_line_chart(selected_year, dataset_type,level0_value):
         # Filter data based on dataset type
         df = merged_dataframe[merged_dataframe['DatasetType'] == dataset_type]
+
+        # Further filter data based on Level0 if a value is selected
+        if level0_value:
+            df = df[df['Level0'] == level0_value]
 
         # Ensure required columns are present
         if 'Year' not in df.columns or 'RegularMembers' not in df.columns:

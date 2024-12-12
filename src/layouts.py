@@ -1,6 +1,6 @@
 from dash import dcc, html
 
-def create_layout():
+def create_layout(merged_dataframe):
     return html.Div(
         className="main-container",
         children=[
@@ -19,6 +19,16 @@ def create_layout():
                         ],
                         value='V2',
                         className="dropdown"
+                    ),
+                    html.Label("Select Level0 Region:"),
+                    dcc.Dropdown(
+                        id='level0-dropdown',
+                        options=[
+                            {'label': level0, 'value': level0} for level0 in merged_dataframe['Level0'].unique()
+                        ],
+                        placeholder="Select a Level0 region",
+                        multi=False,
+                        clearable=True
                     ),
                 ]
             ),
