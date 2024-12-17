@@ -202,24 +202,32 @@ def register_callbacks(app, merged_dataframe):
     )
     def generate_dynamic_treemap(_):
         """
-        Create a static hierarchy treemap from the DataFrame with hierarchy levels.
+        Create a static hierarchy treemap from the DataFrame with renamed hierarchy levels.
         """
         # Validate DataFrame columns
-        if 'Level0' not in merged_dataframe.columns or 'RegularMembers' not in merged_dataframe.columns:
-            raise ValueError("Merged DataFrame missing required columns: 'Level0' or 'RegularMembers'")
+        if 'LevelKraj' not in merged_dataframe.columns or 'RegularMembers' not in merged_dataframe.columns:
+            raise ValueError("Merged DataFrame missing required columns: 'LevelKraj' or 'RegularMembers'")
 
         # Debug DataFrame preview
         print("Merged DataFrame Preview:")
-        print(merged_dataframe[['Level0', 'Level1', 'Level2', 'Level3', 'UnitName', 'RegularMembers']].head())
+        print(merged_dataframe[['LevelKraj', 'LevelOkres', 'LevelStredisko', 'LevelOddil', 'LevelDruzina',
+                                'UnitName', 'RegularMembers']].head())
 
-
+        # Create the treemap with renamed levels
         fig = px.treemap(
             merged_dataframe,
-            path=[px.Constant("All"), 'Level0', 'Level1', 'Level2'],  # Adjust hierarchy
-            values='RegularMembers',  # Use the column representing the size
+            path=[px.Constant("All"), 'LevelKraj', 'LevelOkres', 'LevelStredisko', 'LevelOddil', 'LevelDruzina'],
+            values='RegularMembers',  # Use 'RegularMembers' column for sizes
             title="Static Hierarchy Treemap",
             hover_name='UnitName',
-            labels={'Members': 'Number of Members'},
+            labels={'RegularMembers': 'Number of Members', 'Label': 'Unit Name'},
+        )
+
+        # Update to show UnitName as text
+        fig.update_traces(
+            texttemplate='%{label}',  # Show the hierarchy labels
+            textinfo='label+value',   # Include the label and value
+            textposition='middle center'
         )
 
         return fig
