@@ -18,8 +18,11 @@ class DataLoader:
             """Detect the encoding of a file using chardet."""
             with open(file_path, 'rb') as f:
                 data = f.read()
-                encoding_result = chardet.detect(data)
-                return encoding_result.get('encoding', 'utf-8')  # Default to 'utf-8' if detection fails
+                result = chardet.detect(data)
+                encoding = result.get('encoding', 'utf-8')  # Default to UTF-8 if detection fails
+                confidence = result.get('confidence', 0)   # Confidence level for the detection
+                return encoding, confidence
+
 
     def load_all_csvs(self, delimiter=None):
         """
@@ -41,8 +44,8 @@ class DataLoader:
 
                 try:
                     # Detect encoding
-                    encoding = self.detect_encoding(filepath)
-                    print(f"{filename}: encoding = {encoding}")
+                    encoding, confidence = self.detect_encoding(filepath)
+                    print(f"{filename} -> Encoding: {encoding} (Confidence: {confidence:.2f})")
 
                     # Read file content with error handling
                     with open(filepath, 'r', encoding=encoding, errors='replace') as file:
