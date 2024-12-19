@@ -68,12 +68,11 @@ def register_callbacks(app, merged_dataframe):
     @app.callback(
         Output('age-group-bar-chart', 'figure'),
         [Input('year-slider', 'value'),
-         Input('dataset-type-dropdown', 'value')]
+         ]
     )
-    def update_bar_chart(selected_year, dataset_type):
+    def update_bar_chart(selected_year):
         # Filter data based on dataset type and year
         df = merged_dataframe[
-            (merged_dataframe['DatasetType'] == dataset_type) &
             (merged_dataframe['Year'] == selected_year)
             ]
 

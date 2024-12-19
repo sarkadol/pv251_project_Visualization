@@ -5,42 +5,39 @@ def create_layout(merged_dataframe):
         className="main-container",
         children=[
             html.H1("Scouts Data Visualization"),
+            # Main Container for Line Chart and Information Section
             html.Div(
                 className="container",
-                style={"display": "flex", "flexDirection": "row", "alignItems": "stretch"},  # Flexbox layout
+                style={"display": "flex", "flexDirection": "row", "alignItems": "stretch"},
                 children=[
-                    # Left section: Line chart and slider
+                    # Left Section: Line Chart and Slider
                     html.Div(
-                        style={"flex": "2", "display": "flex", "flexDirection": "column"},  # Take more space
+                        className="left-section",
                         children=[
-                            html.Div(
+                            # Line Chart
+                            dcc.Loading(
+                                id="loading-line-chart",
+                                type="circle",
                                 children=[
-
-                                    dcc.Loading(
-                                        id="loading-line-chart",
-                                        type="circle",
-                                        children=[
-                                            dcc.Graph(
-                                                id='line-chart',
-                                                className="graph",
-                                                config={"staticPlot": False},
-                                                style={"width": "100%"},
-                                                figure={
-                                                    "layout": {
-                                                        "xaxis": {"range": [2016, 2024]},
-                                                        "yaxis": {},
-                                                        "showlegend": False
-                                                    }
-                                                }
-                                            )
-                                        ]
+                                    dcc.Graph(
+                                        id='line-chart',
+                                        className="line-chart",
+                                        config={"staticPlot": False},
+                                        style={"width": "100%"},
+                                        figure={
+                                            "layout": {
+                                                "xaxis": {"range": [2016, 2024]},
+                                                "yaxis": {},
+                                                "showlegend": False
+                                            }
+                                        }
                                     )
                                 ]
                             ),
+                            # Year Slider
                             html.Div(
                                 className="slider-container",
                                 children=[
-                                    html.Label("Select Year:"),
                                     dcc.Slider(
                                         id='year-slider',
                                         min=2016,
@@ -49,159 +46,114 @@ def create_layout(merged_dataframe):
                                         marks={year: str(year) for year in range(2016, 2025)},
                                         value=2024,
                                         included=False,
-                                        tooltip={"placement": "bottom", "always_visible": True},
-                                        className="slider",
+                                        tooltip={"placement": "bottom", "always_visible": True}
                                     )
                                 ]
                             )
                         ]
                     ),
-                    # Right section: Description (Text replaced with paragraphs)
+                    # Right Section: About the Project
                     html.Div(
-                        style={"flex": "1", "paddingLeft": "20px"},  # Take less space
+                        className="right-section",
                         children=[
-                            html.Div(
-                                children=[
-                                    html.H2("About the Project"),  # Section title
-                                    html.P(
-                                        "This dashboard provides an interactive visualization of scouting data. "
-                                        "It allows users to explore trends, compare regions, and analyze age group distributions."
-                                    ),
-                                    html.P([
-                                        "Use the ", html.Strong("interactive controls"), " to select specific years, regions, and datasets. "
-                                                                                         "The visualizations include line charts, bar charts, and a treemap hierarchy for detailed insights."
-                                    ]),
-                                    html.P(
-                                        "Scroll down to explore the hierarchical treemap, which shows the breakdown of participants "
-                                        "by organizational units, such as regions, districts, and groups."
-                                    )
-                                ],
-                                style={
-                                    "width": "100%",
-                                    "height": "100%",  # Ensures it matches the parent's height
-                                    "overflowY": "auto",  # Adds scroll if content overflows
-                                    "padding": "10px",  # Adds internal spacing
-                                    "backgroundColor": "#f9f9f9",  # Optional: Light background for the section
-                                    "border": "1px solid #ccc",  # Optional: Subtle border for clarity
-                                    "borderRadius": "5px"  # Optional: Rounded corners
-                                }
+                            html.H2("About the Project"),
+                            html.P(
+                                "This dashboard provides an interactive visualization of scouting data. "
+                                "It allows users to explore trends, compare regions, and analyze age group distributions."
+                            ),
+                            html.P([
+                                "Use the ", html.Strong("interactive controls"), " to select specific years, regions, and datasets. "
+                                                                                 "The visualizations include line charts, bar charts, and a treemap hierarchy for detailed insights."
+                            ]),
+                            html.P(
+                                "Scroll down to explore the hierarchical treemap, which shows the breakdown of participants "
+                                "by organizational units, such as regions, districts, and groups."
                             )
                         ]
                     )
-
                 ]
             ),
-
+            # Dropdowns
             html.Div(
                 className="dropdown-container",
                 children=[
-                    html.Label("Select Dataset Type:"),
-                    dcc.Dropdown(
-                        id='dataset-type-dropdown',
-                        options=[
-                            {'label': 'Oddily (O2)', 'value': 'O2'},
-                            {'label': 'Strediska (S2)', 'value': 'S2'},
-                            {'label': 'Okres/Kraj (V2)', 'value': 'V2'}
-                        ],
-                        value='V2',
-                        className="dropdown"
-                    ),
                     html.Label("Select Level0 Region:"),
                     dcc.Dropdown(
                         id='level0-dropdown',
                         options=[
-                                    {'label': 'ALL', 'value': 'ALL'}  # Add the "ALL" option here
+                                    {'label': 'ALL', 'value': 'ALL'}
                                 ] + [
                                     {'label': unit_name, 'value': registration_number}
                                     for registration_number, unit_name in merged_dataframe[
-                                merged_dataframe['ID_UnitType'] == "kraj"  # Filter rows where ID_UnitType equals "kraj"
+                                merged_dataframe['ID_UnitType'] == "kraj"
                                 ][['RegistrationNumber', 'UnitName']].drop_duplicates().values
                                 ],
-                        value='ALL',
-                        placeholder="Select a Level0 region",
-                        multi=False,
-                        clearable=True
+                        value='ALL'
                     ),
-
                     html.Label("Select Level1 (Okres):"),
                     dcc.Dropdown(
                         id='level1-dropdown',
                         options=[
-                                    {'label': 'ALL', 'value': 'ALL'}  # Add the "ALL" option here
+                                    {'label': 'ALL', 'value': 'ALL'}
                                 ] + [
                                     {'label': unit_name, 'value': registration_number}
                                     for registration_number, unit_name in merged_dataframe[
-                                merged_dataframe['ID_UnitType'] == "okres"  # Filter rows where ID_UnitType equals "okres"
+                                merged_dataframe['ID_UnitType'] == "okres"
                                 ][['RegistrationNumber', 'UnitName']].drop_duplicates().values
                                 ],
-                        value='ALL',
-                        placeholder="Select a Level1 (Okres)",
-                        multi=False,
-                        clearable=True
+                        value='ALL'
                     ),
-
                     html.Label("Select Level2 (Stredisko):"),
                     dcc.Dropdown(
                         id='level2-dropdown',
                         options=[
-                                    {'label': 'ALL', 'value': 'ALL'}  # Add the "ALL" option here
+                                    {'label': 'ALL', 'value': 'ALL'}
                                 ] + [
                                     {'label': unit_name, 'value': registration_number}
                                     for registration_number, unit_name in merged_dataframe[
-                                merged_dataframe['ID_UnitType'] == "stredisko"  # Filter rows where ID_UnitType equals "stredisko"
+                                merged_dataframe['ID_UnitType'] == "stredisko"
                                 ][['RegistrationNumber', 'UnitName']].drop_duplicates().values
                                 ],
-                        value='ALL',
-                        placeholder="Select a Level2 (Stredisko)",
-                        multi=False,
-                        clearable=True
+                        value='ALL'
                     ),
-
                     html.Label("Select Level3 (Oddíl):"),
                     dcc.Dropdown(
                         id='level3-dropdown',
                         options=[
-                                    {'label': 'ALL', 'value': 'ALL'}  # Add the "ALL" option here
+                                    {'label': 'ALL', 'value': 'ALL'}
                                 ] + [
                                     {'label': unit_name, 'value': registration_number}
                                     for registration_number, unit_name in merged_dataframe[
-                                merged_dataframe['ID_UnitType'] == "oddil"  # Filter rows where ID_UnitType equals "oddíl"
+                                merged_dataframe['ID_UnitType'] == "oddil"
                                 ][['RegistrationNumber', 'UnitName']].drop_duplicates().values
                                 ],
-                        value='ALL',
-                        placeholder="Select a Level3 (Oddíl)",
-                        multi=False,
-                        clearable=True
-                    ),
-
-                ],
-                style={"width": "28%", "display": "inline-block", "verticalAlign": "top"}
+                        value='ALL'
+                    )
+                ]
             ),
-
+            # Bar Chart Section
             html.Div(
+                className="bar-chart-section",
                 children=[
                     dcc.Loading(
                         id="loading-age-group-bar-chart",
                         type="circle",
-                        children=[dcc.Graph(id='age-group-bar-chart', className="graph")]
+                        children=[dcc.Graph(id='age-group-bar-chart')]
                     )
-                ],
-                style={"width": "70%", "display": "inline-block", "verticalAlign": "top"}
+                ]
             ),
-
-
-
+            # Treemap Section
             html.Hr(),
-            html.Div(id="treemap-trigger"),  # This serves as the Input
-
+            html.Div(id="treemap-trigger"),
             html.Div(
+                className="treemap-section",
                 children=[
                     html.H3("Hierarchy - Treemap"),
                     dcc.Loading(
                         id="loading-hierarchy-treemap",
                         type="circle",
                         children=[
-                            dcc.Graph(id='hierarchy-treemap', className="graph")
+                            dcc.Graph(id='hierarchy-treemap')
                         ]
                     )
                 ]
