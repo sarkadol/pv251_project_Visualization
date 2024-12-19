@@ -69,6 +69,13 @@ label {
     color: var(--text-color);
     font-family: var(--font-secondary);
 }
+/* General containers */
+.main-container {
+    padding: 10px;
+    box-sizing: border-box;
+    background-color: var(--light-bg);
+    color: var(--text-color);
+}
 
 /* Dropdown styling */
 .dropdown {
@@ -78,14 +85,7 @@ label {
     border-radius: 5px;
 }
 
-/* Chart styling */
-.graph {
-    height: 400px;
-    margin: 0 auto; /* Shorthand applied */
-    border: 2px solid var(--secondary-color);
-    border-radius: 8px;
-    background-color: var(--white);
-}
+
 
 /* Slider styling */
 .slider .rc-slider-track {
@@ -102,14 +102,14 @@ label {
     color: var(--accent-color);
 }
 
-/* Containers */
+/* Containers
 .container {
     padding: 20px;
     border-radius: 10px;
     background-color: var(--blue-accent);
-    color: var(--white);
-    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow */
-}
+    color: var(--black);
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow
+}*/
 
 .rounded-box {
     border: 2px solid var(--secondary-color);
@@ -156,13 +156,13 @@ a:hover {
     margin-bottom: 10px;
 }
 
-/* General graph styling */
+/* Chart styling */
 .graph {
-    background-color: var(--white); /* Set a white background */
-    border: 2px solid var(--secondary-color); /* Add a border */
-    border-radius: 10px; /* Round the corners */
-    padding: 20px; /* Add internal padding */
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Add a shadow */
+    height: 400px;
+    margin: 0 auto;
+    border: none; /* Removes the border */
+    border-radius: 0; /* Removes rounded corners */
+    background-color: var(--white); /* Keeps the background color */
 }
 
 /* Customize chart containers */
@@ -171,3 +171,7 @@ a:hover {
     width: 80%; /* Restrict the width */
 }
 
+.slider-container {
+    width: 80%;
+    margin: 20px auto 0 auto; /* Top, Right, Bottom, Left */
+}

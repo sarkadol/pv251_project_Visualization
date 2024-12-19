@@ -1,6 +1,7 @@
 from dash.dependencies import Input, Output
 import plotly.express as px
 import pandas as pd
+import plotly.graph_objects as go
 
 def register_callbacks(app, merged_dataframe):
     # Line chart callback
@@ -218,16 +219,14 @@ def register_callbacks(app, merged_dataframe):
             merged_dataframe,
             path=[px.Constant("All"), 'LevelKraj', 'LevelOkres', 'LevelStredisko', 'LevelOddil', 'LevelDruzina'],
             values='RegularMembers',  # Use 'RegularMembers' column for sizes
-            title="Static Hierarchy Treemap",
-            hover_name='UnitName',
-            labels={'RegularMembers': 'Number of Members', 'Label': 'Unit Name'},
+            hover_data=['UnitName'],      # UnitName will show in hover tooltips
+            custom_data=['UnitName']      # Pass UnitName for custom text
         )
 
         # Update to show UnitName as text
         fig.update_traces(
-            texttemplate='%{label}',  # Show the hierarchy labels
-            textinfo='label+value',   # Include the label and value
-            textposition='middle center'
+            texttemplate='%{customdata}',  # Use UnitName for all labels
+            hovertemplate='<b>%{customdata}</b><br>Value: %{value}'
         )
 
         return fig
