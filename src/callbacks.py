@@ -4,6 +4,11 @@ import plotly.express as px
 import pandas as pd
 import plotly.graph_objects as go
 
+pestra_palette = [
+    "#FFCC00", "#EE8027", "#E53434", "#A0067D", "#5E2281",
+    "#172983", "#007BC2", "#89BA17"
+]
+
 def register_callbacks(app, merged_dataframe):
     # Line chart callback
     @app.callback(
@@ -145,13 +150,25 @@ def register_callbacks(app, merged_dataframe):
             y='Members',
             title=f"Age Group Distribution in {selected_year}",
             labels={'AgeGroup': 'Age Group', 'Members': 'Number of Members'},
-            text_auto=True
+            text_auto=True,
+            color='AgeGroup',
+            color_discrete_sequence=pestra_palette  # Use the Pestrá palette here
+
         )
         fig.update_layout(
             xaxis_title="Age Group",
             yaxis_title="Number of Members",
             title_x=0.5,
+            showlegend=False,  # Disable the legend
+            bargap=0.1,  # Adjust space between bars (set closer to 0 to make bars wider)
             barmode='group'
+        )
+        # Format hover labels and y-axis
+        fig.update_traces(
+            hovertemplate='<b>Age Group=%{x}</b><br>Number of Members=%{y:,}<extra></extra>',
+            texttemplate='%{y:.3s}',  # Show values in abbreviated form (e.g., 200k)
+            textposition='outside',  # Place text above bars
+            width=0.9  # Adjust the bar width
         )
         return fig
 
