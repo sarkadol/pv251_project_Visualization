@@ -1,3 +1,4 @@
+from dash import no_update
 from dash.dependencies import Input, Output
 import plotly.express as px
 import pandas as pd
@@ -8,33 +9,54 @@ def register_callbacks(app, merged_dataframe):
     @app.callback(
         Output('line-chart', 'figure'),
         [Input('year-slider', 'value'),
-         Input('level0-dropdown', 'value')]
-    )
-    def update_line_chart(selected_year, level0_value):
+         Input('level0-dropdown', 'value'),
+         Input('level1-dropdown', 'value'),
+         Input('level2-dropdown', 'value'),
+         Input('level3-dropdown', 'value')])
+    def update_line_chart(selected_year, level0_value, level1_value, level2_value, level3_value):
         # Start with the full dataset
         df = merged_dataframe.copy()
 
         # Debug print
         print(f"Selected year: {selected_year}")
-        print(f"Selected Level0: {level0_value}")
+        print(f"Level0: {level0_value}, Level1: {level1_value}, Level2: {level2_value}, Level3: {level3_value}")
 
-        # Further filter data based on Level0 if a value is selected
-        if level0_value and level0_value != 'ALL':
-            df = df[df['RegistrationNumber'].str[:2] == level0_value[:2]]  # Correct filtering
+        # Determine the most specific level to use
+        selected_level = None
+        selected_value = None
 
-        # Ensure required columns are present
-        #if 'Year' not in df.columns or 'RegularMembers' not in df.columns:
-        #    return px.line(title="Dataset does not have required columns: 'Year' and 'RegularMembers'")
+        if level3_value != 'ALL':
+            selected_level = 'oddil'
+            selected_value = level3_value
+        elif level2_value != 'ALL':
+            selected_level = 'stredisko'
+            selected_value = level2_value
+        elif level1_value != 'ALL':
+            selected_level = 'okres'
+            selected_value = level1_value
+        elif level0_value != 'ALL':
+            selected_level = 'kraj'
+            selected_value = level0_value
+
+        # Filter the dataset if a specific level is selected
+        if selected_value:
+            df = df[df['RegistrationNumber'] == selected_value]
+
+        # Retrieve the UnitName for the title
+        unit_name = None
+        if selected_value:
+            unit_row = df[df['RegistrationNumber'] == selected_value]
+            if not unit_row.empty:
+                unit_name = unit_row['UnitName'].iloc[0]
 
         # Aggregate RegularMembers by year
         df_grouped = df.groupby('Year', as_index=False)['RegularMembers'].sum()
-
 
         # Determine the dynamic title
         if level0_value == 'ALL' or not level0_value:
             title = "Regular Members Over Time (All Regions)"
         else:
-            title = f"Regular Members Over Time ({level0_value})"  # Fallback to raw value if no match
+            title = f"Regular Members Over Time ({unit_name})" if unit_name else f"Regular Members Over Time ({level0_value})"
 
 
         # Create the line chart
@@ -229,3 +251,21 @@ def register_callbacks(app, merged_dataframe):
         )
 
         return fig
+
+    @app.callback(
+        [
+            Output('level0-dropdown', 'value',allow_duplicate=True),
+            Output('level1-dropdown', 'value',allow_duplicate=True),
+            Output('level2-dropdown', 'value',allow_duplicate=True),
+            Output('level3-dropdown', 'value',allow_duplicate=True)
+        ],
+        [Input('reset-button', 'n_clicks')],
+        prevent_initial_call=True
+    )
+    def reset_dropdowns(n_clicks):
+        # Reset all dropdowns to 'ALL' when the button is clicked
+        if n_clicks > 0:
+            return 'ALL', 'ALL', 'ALL', 'ALL'
+        # Initial values
+        return no_update
+

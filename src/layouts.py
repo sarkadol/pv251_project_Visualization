@@ -77,7 +77,7 @@ def create_layout(merged_dataframe):
             html.Div(
                 className="dropdown-container",
                 children=[
-                    html.Label("Select Level0 Region:"),
+                    html.Label("Select Level0 (Kraj):"),
                     dcc.Dropdown(
                         id='level0-dropdown',
                         options=[
@@ -103,7 +103,7 @@ def create_layout(merged_dataframe):
                                 ],
                         value='ALL'
                     ),
-                    html.Label("Select Level2 (Stredisko):"),
+                    html.Label("Select Level2 (Středisko):"),
                     dcc.Dropdown(
                         id='level2-dropdown',
                         options=[
@@ -128,6 +128,12 @@ def create_layout(merged_dataframe):
                                 ][['RegistrationNumber', 'UnitName']].drop_duplicates().values
                                 ],
                         value='ALL'
+                    ),
+                    html.Button(
+                        "Reset All",
+                        id='reset-button',
+                        n_clicks=0,
+                        className="reset-button"
                     )
                 ]
             ),
