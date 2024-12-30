@@ -9,6 +9,11 @@ pestra_palette = [
     "#172983", "#007BC2", "#89BA17"
 ]
 
+logo_palette = [
+    "#FCC11E", "#F9B200", "#F49E00", "#294885", "#255C9E",
+    "#336CAA", "#3979B5"
+]
+
 def register_callbacks(app, merged_dataframe):
     # Line chart callback
     @app.callback(
@@ -23,7 +28,7 @@ def register_callbacks(app, merged_dataframe):
         df = merged_dataframe.copy()
 
         # Debug print
-        print(f"Selected year: {selected_year}")
+        #print(f"Selected year: {selected_year}")
         print(f"Level0: {level0_value}, Level1: {level1_value}, Level2: {level2_value}, Level3: {level3_value}")
 
         # Determine the most specific level to use
@@ -88,47 +93,52 @@ def register_callbacks(app, merged_dataframe):
         fig.update_layout(
             xaxis=dict(dtick=1),
             yaxis=dict(title="Regular Members"),
-            title_x=0.5
+            title_x=0.5,
+            showlegend=False,
         )
         return fig
     # Bar chart for age groups callback
     @app.callback(
         Output('age-group-bar-chart', 'figure'),
-        [Input('year-slider', 'value'),
-         ]
+        [
+            Input('year-slider', 'value'),
+            Input('level0-dropdown', 'value'),
+            Input('level1-dropdown', 'value'),
+            Input('level2-dropdown', 'value'),
+            Input('level3-dropdown', 'value'),
+        ]
     )
-    def update_bar_chart(selected_year):
-        # Filter data based on dataset type and year
-        df = merged_dataframe[
-            (merged_dataframe['Year'] == selected_year)
-            ]
+    def update_bar_chart(selected_year, level0_value, level1_value, level2_value, level3_value):
+        # Start with the full dataset
+        df = merged_dataframe.copy()
+
+        # Determine the most specific level to use
+        selected_level = None
+        selected_value = None
+
+        if level3_value != 'ALL':
+            selected_level = 'oddil'
+            selected_value = level3_value
+        elif level2_value != 'ALL':
+            selected_level = 'stredisko'
+            selected_value = level2_value
+        elif level1_value != 'ALL':
+            selected_level = 'okres'
+            selected_value = level1_value
+        elif level0_value != 'ALL':
+            selected_level = 'kraj'
+            selected_value = level0_value
+
+        # Filter the dataset if a specific level is selected
+        if selected_value:
+            df = df[df['RegistrationNumber'] == selected_value]
+
+        # Further filter by the selected year
+        df = df[df['Year'] == selected_year]
 
         # Ensure required columns are present
         required_columns = ['MembersTo6', 'MembersTo15', 'MembersTo18', 'MembersTo26', 'MembersFrom26']
         if not all(col in df.columns for col in required_columns):
-            """
-    if level0_value and level0_value != 'ALL':
-        # Filter Level1 options based on Level0
-        level1_options += [
-            {'label': unit_name, 'value': registration_number}
-            for registration_number, unit_name in df[
-                df['RegistrationNumber'].str.startswith(level0_value) & (df['ID_UnitType'] == "okres")
-                ][['RegistrationNumber', 'UnitName']].drop_duplicates().values
-        ]
-
-    # Filter Level2 options based on Level0
-    level2_options += [
-        {'label': unit_name, 'value': registration_number}
-        for registration_number, unit_name in df[
-            df['RegistrationNumber'].str.startswith(level0_value) & (df['ID_UnitType'] == "stredisko")
-            ][['RegistrationNumber', 'UnitName']].drop_duplicates().values
-    ]
-        @app.callback(
-            Output('hierarchy-treemap', 'figure'),
-            [Input('year-slider', 'value')]
-        )
-        def update_hierarchy_treemap(selected_year):
-            pass"""
             return px.bar(title="Dataset does not have required columns for age groups.")
 
         # Aggregate data for age groups
@@ -152,17 +162,20 @@ def register_callbacks(app, merged_dataframe):
             labels={'AgeGroup': 'Age Group', 'Members': 'Number of Members'},
             text_auto=True,
             color='AgeGroup',
-            color_discrete_sequence=pestra_palette  # Use the Pestrá palette here
-
+            color_discrete_sequence=pestra_palette
         )
+
+        # Update layout and formatting
         fig.update_layout(
             xaxis_title="Age Group",
             yaxis_title="Number of Members",
             title_x=0.5,
             showlegend=False,  # Disable the legend
             bargap=0.1,  # Adjust space between bars (set closer to 0 to make bars wider)
-            barmode='group'
+            barmode='group',
+
         )
+
         # Format hover labels and y-axis
         fig.update_traces(
             hovertemplate='<b>Age Group=%{x}</b><br>Number of Members=%{y:,}<extra></extra>',
@@ -170,7 +183,9 @@ def register_callbacks(app, merged_dataframe):
             textposition='outside',  # Place text above bars
             width=0.9  # Adjust the bar width
         )
+
         return fig
+
 
     @app.callback(
         [
@@ -179,61 +194,57 @@ def register_callbacks(app, merged_dataframe):
             Output('level3-dropdown', 'options'),
             Output('level1-dropdown', 'value'),
             Output('level2-dropdown', 'value'),
-            Output('level3-dropdown', 'value'),
+            Output('level3-dropdown', 'value')
         ],
         [
-            Input('level0-dropdown', 'value')
+            Input('level0-dropdown', 'value'),
+            Input('level1-dropdown', 'value'),
+            Input('level2-dropdown', 'value'),
+            Input('level3-dropdown', 'value')
         ]
     )
-    def update_from_level0(level0_value):
-        # Start with the full dataset
-        df = merged_dataframe.copy()
+    def update_dropdowns(level0_value, level1_value, level2_value, level3_value):
+        # Filter for LevelKraj
+        level0_value_short = level0_value[:2]  # Ensure the top-level value is shortened to match
 
-        # Debug prints for Level0 value
-        print(f"Selected Level0: {level0_value}")
+        # Update Level 1 (Okres) options based on LevelKraj
+        level1_options = get_options(
+            merged_dataframe,
+            current_level='LevelOkres',
+            parent_level='LevelKraj',
+            parent_value=level0_value_short
+        )
+        level1_value = level1_value if level1_value in [opt['value'] for opt in level1_options] else 'ALL'
 
-        # Default options for Level1, Level2, and Level3
-        level1_options = [{'label': 'ALL', 'value': 'ALL'}]
-        level2_options = [{'label': 'ALL', 'value': 'ALL'}]
-        level3_options = [{'label': 'ALL', 'value': 'ALL'}]
+        # Update Level 2 (Stredisko) options based on LevelKraj (even if LevelOkres is 'ALL')
+        level2_options = get_options(
+            merged_dataframe,
+            current_level='LevelStredisko',
+            parent_level='LevelOkres',
+            parent_value=level1_value,
+            top_level='LevelKraj',
+            top_value=level0_value_short
+        )
+        level2_value = level2_value if level2_value in [opt['value'] for opt in level2_options] else 'ALL'
 
-        if level0_value and level0_value != 'ALL':
-            # Match first two characters of RegistrationNumber
-            first_two_digits = level0_value[:2]
-            print(f"Filtering for first two digits: {first_two_digits}")
+        # Update Level 3 (Oddil) options based on LevelKraj (even if LevelStredisko is 'ALL')
+        level3_options = get_options(
+            merged_dataframe,
+            current_level='LevelOddil',
+            parent_level='LevelStredisko',
+            parent_value=level2_value,
+            top_level='LevelKraj',
+            top_value=level0_value_short
+        )
+        level3_value = level3_value if level3_value in [opt['value'] for opt in level3_options] else 'ALL'
 
-            # Filter Level1 using the first two characters of RegistrationNumber
-            filtered_level1 = df[
-                (df['RegistrationNumber'].str[:2] == first_two_digits) & (df['ID_UnitType'] == "okres")
-                ]
-            #print(f"Filtered Level1 options:\n{filtered_level1}")
-            level1_options += [
-                {'label': unit_name, 'value': registration_number}
-                for registration_number, unit_name in filtered_level1[['RegistrationNumber', 'UnitName']].drop_duplicates().values
-            ]
+        # Debugging output
+        print(f"Level0 Value: {level0_value_short}")
+        print(f"Level1 Value: {level1_value}")
+        print(f"Level2 Value: {level2_value}")
+        print(f"Level3 Value: {level3_value}")
 
-            # Filter Level2 using the first two characters of RegistrationNumber
-            filtered_level2 = df[
-                (df['RegistrationNumber'].str[:2] == first_two_digits) & (df['ID_UnitType'] == "stredisko")
-                ]
-            #print(f"Filtered Level2 options:\n{filtered_level2}")
-            level2_options += [
-                {'label': unit_name, 'value': registration_number}
-                for registration_number, unit_name in filtered_level2[['RegistrationNumber', 'UnitName']].drop_duplicates().values
-            ]
-
-            # Filter Level3 using the first two characters of RegistrationNumber
-            filtered_level3 = df[
-                (df['RegistrationNumber'].str[:2] == first_two_digits) & (df['ID_UnitType'] == "oddil")
-                ]
-            #print(f"Filtered Level3 options:\n{filtered_level3}")
-            level3_options += [
-                {'label': unit_name, 'value': registration_number}
-                for registration_number, unit_name in filtered_level3[['RegistrationNumber', 'UnitName']].drop_duplicates().values
-            ]
-
-        # If "ALL" is selected, reset all values to "ALL"
-        return level1_options, level2_options, level3_options, 'ALL', 'ALL', 'ALL'
+        return level1_options, level2_options, level3_options, level1_value, level2_value, level3_value
 
     @app.callback(
         Output('hierarchy-treemap', 'figure'),
@@ -285,4 +296,56 @@ def register_callbacks(app, merged_dataframe):
             return 'ALL', 'ALL', 'ALL', 'ALL'
         # Initial values
         return no_update
+
+
+    # Assuming `merged_dataframe` contains hierarchical data
+def get_options(dataframe, current_level, parent_level=None, parent_value=None, top_level=None, top_value=None):
+    """
+    Get options for a dropdown based on the current level, its parent level, and top-level filters.
+
+    Args:
+        dataframe (pd.DataFrame): The dataframe containing the hierarchical data.
+        current_level (str): The column representing the current level (e.g., 'Level3').
+        parent_level (str): The column representing the parent level (e.g., 'Level2').
+        parent_value (str): The value selected in the parent level dropdown.
+        top_level (str): The column representing the topmost level (e.g., 'LevelKraj').
+        top_value (str): The value selected in the topmost level dropdown.
+
+    Returns:
+        list: A list of dictionaries with labels and values for the dropdown.
+    """
+    # Map current levels to their corresponding ID_UnitType
+    level_to_unit_type = {
+        'LevelOddil': 'oddil',
+        'LevelStredisko': 'stredisko',
+        'LevelOkres': 'okres'
+    }
+
+    # Determine the valid unit type for the current level
+    current_unit_type = level_to_unit_type.get(current_level, None)
+
+    # Filter the dataframe for rows matching the current unit type
+    if current_unit_type:
+        filtered_dataframe = dataframe[dataframe['ID_UnitType'] == current_unit_type]
+    else:
+        # If the current level does not map to a specific ID_UnitType, use the full dataframe
+        filtered_dataframe = dataframe
+
+    # Apply top-level filtering if specified
+    if top_level and top_value != 'ALL':
+        filtered_dataframe = filtered_dataframe[filtered_dataframe[top_level] == top_value]
+
+    # Apply parent-level filtering if specified
+    if parent_level and parent_value != 'ALL':
+        filtered_dataframe = filtered_dataframe[filtered_dataframe[parent_level] == parent_value]
+
+    # Debugging output
+    print(f"Filtered DataFrame for {current_level}:")
+    print(filtered_dataframe.head())
+
+    # Generate options for the dropdown
+    return [{'label': 'ALL', 'value': 'ALL'}] + [
+        {'label': name, 'value': id_}
+        for id_, name in filtered_dataframe[[current_level, 'UnitName']].drop_duplicates().values
+    ]
 
