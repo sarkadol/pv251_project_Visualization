@@ -207,35 +207,19 @@ def register_callbacks(app, merged_dataframe):
         # Filter for LevelKraj
         level0_value_short = level0_value[:2]  # Ensure the top-level value is shortened to match
 
+        # Filters dictionary for cascading filtering
+        filters = {'LevelKraj': level0_value_short, 'LevelOkres': level1_value, 'LevelStredisko': level2_value}
+
         # Update Level 1 (Okres) options based on LevelKraj
-        level1_options = get_options(
-            merged_dataframe,
-            current_level='LevelOkres',
-            parent_level='LevelKraj',
-            parent_value=level0_value_short
-        )
+        level1_options = get_options(merged_dataframe, current_level='LevelOkres', parent_filters={'LevelKraj': level0_value_short})
         level1_value = level1_value if level1_value in [opt['value'] for opt in level1_options] else 'ALL'
 
-        # Update Level 2 (Stredisko) options based on LevelKraj (even if LevelOkres is 'ALL')
-        level2_options = get_options(
-            merged_dataframe,
-            current_level='LevelStredisko',
-            parent_level='LevelOkres',
-            parent_value=level1_value,
-            top_level='LevelKraj',
-            top_value=level0_value_short
-        )
+        # Update Level 2 (Stredisko) options based on LevelKraj and LevelOkres
+        level2_options = get_options(merged_dataframe, current_level='LevelStredisko', parent_filters={'LevelKraj': level0_value_short, 'LevelOkres': level1_value})
         level2_value = level2_value if level2_value in [opt['value'] for opt in level2_options] else 'ALL'
 
-        # Update Level 3 (Oddil) options based on LevelKraj (even if LevelStredisko is 'ALL')
-        level3_options = get_options(
-            merged_dataframe,
-            current_level='LevelOddil',
-            parent_level='LevelStredisko',
-            parent_value=level2_value,
-            top_level='LevelKraj',
-            top_value=level0_value_short
-        )
+        # Update Level 3 (Oddil) options based on all parent levels
+        level3_options = get_options(merged_dataframe, current_level='LevelOddil', parent_filters=filters)
         level3_value = level3_value if level3_value in [opt['value'] for opt in level3_options] else 'ALL'
 
         # Debugging output
@@ -299,17 +283,14 @@ def register_callbacks(app, merged_dataframe):
 
 
     # Assuming `merged_dataframe` contains hierarchical data
-def get_options(dataframe, current_level, parent_level=None, parent_value=None, top_level=None, top_value=None):
+def get_options(dataframe, current_level, parent_filters):
     """
-    Get options for a dropdown based on the current level, its parent level, and top-level filters.
+    Get options for a dropdown based on the current level and all selected parent filters.
 
     Args:
         dataframe (pd.DataFrame): The dataframe containing the hierarchical data.
         current_level (str): The column representing the current level (e.g., 'Level3').
-        parent_level (str): The column representing the parent level (e.g., 'Level2').
-        parent_value (str): The value selected in the parent level dropdown.
-        top_level (str): The column representing the topmost level (e.g., 'LevelKraj').
-        top_value (str): The value selected in the topmost level dropdown.
+        parent_filters (dict): A dictionary of parent levels and their selected values.
 
     Returns:
         list: A list of dictionaries with labels and values for the dropdown.
@@ -331,13 +312,10 @@ def get_options(dataframe, current_level, parent_level=None, parent_value=None, 
         # If the current level does not map to a specific ID_UnitType, use the full dataframe
         filtered_dataframe = dataframe
 
-    # Apply top-level filtering if specified
-    if top_level and top_value != 'ALL':
-        filtered_dataframe = filtered_dataframe[filtered_dataframe[top_level] == top_value]
-
-    # Apply parent-level filtering if specified
-    if parent_level and parent_value != 'ALL':
-        filtered_dataframe = filtered_dataframe[filtered_dataframe[parent_level] == parent_value]
+    # Apply all parent-level filters
+    for parent_level, parent_value in parent_filters.items():
+        if parent_value != 'ALL':
+            filtered_dataframe = filtered_dataframe[filtered_dataframe[parent_level] == parent_value]
 
     # Debugging output
     print(f"Filtered DataFrame for {current_level}:")
@@ -348,4 +326,3 @@ def get_options(dataframe, current_level, parent_level=None, parent_value=None, 
         {'label': name, 'value': id_}
         for id_, name in filtered_dataframe[[current_level, 'UnitName']].drop_duplicates().values
     ]
-
