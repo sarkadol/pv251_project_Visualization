@@ -7,8 +7,14 @@ from utils import add_hierarchy_levels
 # Initialize DataLoader
 data_directory = '../data'
 data_loader = DataLoader(data_directory)
-dataframes = data_loader.load_all_csvs()  # Load datasets
-data_loader.normalize_and_merge()
+if(True):
+    # use one already merged
+    data_loader.load_merged_dataframe('../src/merged_dataframe.csv')
+else:
+    # load a new csv or play with encoding
+    dataframes = data_loader.load_all_csvs()  # Load datasets
+    data_loader.normalize_and_merge()
+
 merged_dataframe = data_loader.get_merged_dataframe()
 merged_dataframe = add_hierarchy_levels(merged_dataframe)
 

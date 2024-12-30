@@ -153,3 +153,21 @@ class DataLoader:
             print("Merged DataFrame is not available. Please run normalize_and_merge() first.")
             return pd.DataFrame()  # Return an empty DataFrame if not available
         return self.merged_dataframe
+
+    def load_merged_dataframe(self, filepath):
+        """
+        Load a pre-merged dataset directly from a file.
+        Parameters:
+            filepath (str): Path to the file containing the merged dataset.
+        """
+        try:
+            # Detect encoding (optional, if needed)
+            encoding, confidence = self.detect_encoding(filepath)
+            print(f"Detected encoding: {encoding} (Confidence: {confidence:.2f})")
+
+            # Load the merged dataset
+            self.merged_dataframe = pd.read_csv(filepath, encoding=encoding)
+            print(f"Merged dataset loaded successfully from {filepath}.")
+        except Exception as e:
+            print(f"Error loading merged dataset: {e}")
+            self.merged_dataframe = pd.DataFrame()  # Set to empty DataFrame on failure
