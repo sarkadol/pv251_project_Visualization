@@ -87,14 +87,17 @@ def register_callbacks(app, merged_dataframe):
                 mode='markers',
                 marker=dict(size=12, color='red', symbol='circle')
             )
+        y_max = df_grouped['RegularMembers'].max() * 1.1 if not df_grouped.empty else 10  # Add 10% padding or use a default
 
-        # Ensure consistent x-axis and y-axis range
+
+    # Ensure consistent x-axis and y-axis range
         fig.update_traces(line=dict(width=3))
         fig.update_layout(
             xaxis=dict(dtick=1),
-            yaxis=dict(title="Regular Members"),
+            yaxis=dict(title="Regular Members",range=[0, y_max]),
             title_x=0.5,
             showlegend=False,
+            transition_duration=2000,  # Smooth animation duration
         )
         return fig
     # Bar chart for age groups callback
@@ -153,12 +156,27 @@ def register_callbacks(app, merged_dataframe):
         # Create a DataFrame for plotting
         age_group_df = pd.DataFrame({'AgeGroup': age_groups.keys(), 'Members': age_groups.values()})
 
+        # Retrieve the UnitName for the title
+        unit_name = None
+        if selected_value:
+            unit_row = merged_dataframe[merged_dataframe['RegistrationNumber'] == selected_value]
+            if not unit_row.empty:
+                unit_name = unit_row['UnitName'].iloc[0]
+
+        # Determine the dynamic title
+        if level0_value == 'ALL' or not level0_value:
+            print("level0_value",level0_value)
+            title = f"Age Group Distribution in {selected_year} (All Regions)"
+        else:
+            title = f"Age Group Distribution in {selected_year} ({unit_name})" if unit_name else f"Age Group Distribution in {selected_year} ({level0_value})"
+
+
         # Create the bar chart
         fig = px.bar(
             age_group_df,
             x='AgeGroup',
             y='Members',
-            title=f"Age Group Distribution in {selected_year}",
+            title=title,
             labels={'AgeGroup': 'Age Group', 'Members': 'Number of Members'},
             text_auto=True,
             color='AgeGroup',
@@ -173,7 +191,7 @@ def register_callbacks(app, merged_dataframe):
             showlegend=False,  # Disable the legend
             bargap=0.1,  # Adjust space between bars (set closer to 0 to make bars wider)
             barmode='group',
-
+            transition_duration=2000,  # Smooth animation duration
         )
 
         # Format hover labels and y-axis
@@ -206,6 +224,7 @@ def register_callbacks(app, merged_dataframe):
     def update_dropdowns(level0_value, level1_value, level2_value, level3_value):
         # Filter for LevelKraj
         level0_value_short = level0_value[:2]  # Ensure the top-level value is shortened to match
+        # level0value for ALL is then AL - solved, made problems in get_options
 
         # Filters dictionary for cascading filtering
         filters = {'LevelKraj': level0_value_short, 'LevelOkres': level1_value, 'LevelStredisko': level2_value}
@@ -314,7 +333,7 @@ def get_options(dataframe, current_level, parent_filters):
 
     # Apply all parent-level filters
     for parent_level, parent_value in parent_filters.items():
-        if parent_value != 'ALL':
+        if parent_value not in ['ALL', 'AL']:
             filtered_dataframe = filtered_dataframe[filtered_dataframe[parent_level] == parent_value]
 
     # Debugging output

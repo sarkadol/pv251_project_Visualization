@@ -114,3 +114,68 @@ h1, h2, h3 {
     color: #666;
     cursor: not-allowed;
 }
+/* Slider Container Styling */
+.slider-container {
+    margin: 20px auto;
+    width: 80%;
+    text-align: center;
+}
+
+/* Slider Track (background line) */
+.slider-container .rc-slider-rail {
+    background-color: #3979B5; /* Match header color */
+    height: 6px;
+    border-radius: 3px;
+}
+
+/* Slider Track (selected range) */
+.slider-container .rc-slider-track {
+    background-color: #244d6e; /* Darker shade for active section */
+    height: 6px;
+    border-radius: 3px;
+}
+
+/* Slider Handle (draggable circle) */
+.slider-container .rc-slider-handle {
+    border: 2px solid #3979B5;
+    background-color: #ffffff;
+    width: 18px;
+    height: 18px;
+    margin-top: -6px; /* Center the handle */
+    border-radius: 50%;
+    cursor: pointer;
+    transition: box-shadow 0.3s ease;
+}
+
+/* Handle Hover Effect */
+.slider-container .rc-slider-handle:hover {
+    box-shadow: 0 0 10px rgba(57, 121, 181, 0.7);
+}
+
+/* Handle Focus Effect */
+.slider-container .rc-slider-handle:focus {
+    box-shadow: 0 0 10px rgba(57, 121, 181, 0.7);
+}
+
+/* Slider Mark Labels */
+.slider-container .rc-slider-mark-text {
+    color: #333;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+/* Slider Tooltip */
+.slider-container .rc-slider-tooltip {
+    background-color: #3979B5; /* Match scout style */
+    color: #ffffff; /* White text for contrast */
+    border-radius: 5px; /* Rounded corners */
+    font-weight: bold; /* Bold text */
+    font-size: 14px; /* Adjust font size */
+    padding: 5px 10px; /* Add padding inside the tooltip */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Subtle shadow for better visibility */
+}
+
+/* Tooltip Arrow */
+.slider-container .rc-slider-tooltip-arrow {
+    color: #3979B5; /* Match tooltip background color */
+}
