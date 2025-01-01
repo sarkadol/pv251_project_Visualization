@@ -324,5 +324,5 @@ def get_options(dataframe, current_level, parent_filters):
     # Generate options for the dropdown
     return [{'label': 'ALL', 'value': 'ALL'}] + [
         {'label': name, 'value': id_}
-        for id_, name in filtered_dataframe[[current_level, 'UnitName']].drop_duplicates().values
+        for id_, name in filtered_dataframe[['RegistrationNumber', 'UnitName']].drop_duplicates().values
     ]
