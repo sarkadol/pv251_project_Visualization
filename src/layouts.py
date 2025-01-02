@@ -84,65 +84,88 @@ def create_layout(merged_dataframe):
             ),
             # Dropdowns
             html.Div(
-                className="dropdown-container",
+                className="dropdowns-row",
                 children=[
-                    html.Label("Select Level0 (Kraj):"),
-                    dcc.Dropdown(
-                        id='level0-dropdown',
-                        options=[
-                                    {'label': 'ALL', 'value': 'ALL'}
-                                ] + [
+                    # Column 1: Level0 Dropdown
+                    html.Div(
+                        className="dropdown-container",
+                        children=[
+                            html.Label("Select Region (Kraj):"),
+                            dcc.Dropdown(
+                                id='level0-dropdown',
+                                options=[{'label': 'ALL', 'value': 'ALL'}] + [
                                     {'label': unit_name, 'value': registration_number}
                                     for registration_number, unit_name in merged_dataframe[
-                                merged_dataframe['ID_UnitType'] == "kraj"
-                                ][['RegistrationNumber', 'UnitName']].drop_duplicates().values
+                                        merged_dataframe['ID_UnitType'] == "kraj"
+                                        ][['RegistrationNumber', 'UnitName']].drop_duplicates().values
                                 ],
-                        value='ALL'
+                                value='ALL',
+                            )
+                        ]
                     ),
-                    html.Label("Select Level1 (Okres):"),
-                    dcc.Dropdown(
-                        id='level1-dropdown',
-                        options=[
-                                    {'label': 'ALL', 'value': 'ALL'}
-                                ] + [
+                    # Column 2: Level1 Dropdown
+                    html.Div(
+                        className="dropdown-container",
+                        children=[
+                            html.Label("Select District (Okres):"),
+                            dcc.Dropdown(
+                                id='level1-dropdown',
+                                options=[{'label': 'ALL', 'value': 'ALL'}] + [
                                     {'label': unit_name, 'value': registration_number}
                                     for registration_number, unit_name in merged_dataframe[
-                                merged_dataframe['ID_UnitType'] == "okres"
-                                ][['RegistrationNumber', 'UnitName']].drop_duplicates().values
+                                        merged_dataframe['ID_UnitType'] == "okres"
+                                        ][['RegistrationNumber', 'UnitName']].drop_duplicates().values
                                 ],
-                        value='ALL'
+                                value='ALL',
+                            )
+                        ]
                     ),
-                    html.Label("Select Level2 (Středisko):"),
-                    dcc.Dropdown(
-                        id='level2-dropdown',
-                        options=[
-                                    {'label': 'ALL', 'value': 'ALL'}
-                                ] + [
+                    # Column 3: Level2 Dropdown
+                    html.Div(
+                        className="dropdown-container",
+                        children=[
+                            html.Label("Select Group (Středisko):"),
+                            dcc.Dropdown(
+                                id='level2-dropdown',
+                                options=[{'label': 'ALL', 'value': 'ALL'}] + [
                                     {'label': unit_name, 'value': registration_number}
                                     for registration_number, unit_name in merged_dataframe[
-                                merged_dataframe['ID_UnitType'] == "stredisko"
-                                ][['RegistrationNumber', 'UnitName']].drop_duplicates().values
+                                        merged_dataframe['ID_UnitType'] == "stredisko"
+                                        ][['RegistrationNumber', 'UnitName']].drop_duplicates().values
                                 ],
-                        value='ALL'
+                                value='ALL',
+                            )
+                        ]
                     ),
-                    html.Label("Select Level3 (Oddíl):"),
-                    dcc.Dropdown(
-                        id='level3-dropdown',
-                        options=[
-                                    {'label': 'ALL', 'value': 'ALL'}
-                                ] + [
+                    # Column 4: Level3 Dropdown
+                    html.Div(
+                        className="dropdown-container",
+                        children=[
+                            html.Label("Select Troop (Oddíl):"),
+                            dcc.Dropdown(
+                                id='level3-dropdown',
+                                options=[{'label': 'ALL', 'value': 'ALL'}] + [
                                     {'label': unit_name, 'value': registration_number}
                                     for registration_number, unit_name in merged_dataframe[
-                                merged_dataframe['ID_UnitType'] == "oddil"
-                                ][['RegistrationNumber', 'UnitName']].drop_duplicates().values
+                                        merged_dataframe['ID_UnitType'] == "oddil"
+                                        ][['RegistrationNumber', 'UnitName']].drop_duplicates().values
                                 ],
-                        value='ALL'
+                                value='ALL',
+                            )
+                        ]
                     ),
-                    html.Button(
-                        "Reset All",
-                        id='reset-button',
-                        n_clicks=0,
-                        className="reset-button"
+                    # Column 5: Reset Button
+                    html.Div(
+                        className="dropdown-container",
+                        children=[
+                            html.Label(" "),  # Empty label for spacing
+                            html.Button(
+                                "Reset All",
+                                id='reset-button',
+                                n_clicks=0,
+                                className="reset-button",
+                            )
+                        ]
                     )
                 ]
             ),

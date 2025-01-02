@@ -82,25 +82,36 @@ h1, h2, h3 {
     color: #333;
 }
 
-/* Dropdowns */
+.dropdowns-row {
+    display: flex; /* Align items in a single row */
+    gap: 20px; /* Add spacing between the columns */
+    margin-top: 20px; /* Space above the dropdown row */
+    justify-content: space-between; /* Spread items evenly */
+    align-items: flex-start; /* Align items to the top */
+    flex-wrap: wrap; /* Allow wrapping on small screens */
+}
+
+/* Each dropdown container */
 .dropdown-container {
-    width: 28%;
-    display: inline-block;
-    vertical-align: top;
+    flex: 1; /* Make each container take equal space */
+    min-width: 150px; /* Ensure dropdowns don't shrink too much */
+    display: flex;
+    flex-direction: column; /* Stack label and dropdown vertically */
+    gap: 5px; /* Space between label and dropdown */
 }
 
-.dropdown-container label {
-    font-weight: bold;
-    margin-bottom: 5px;
+/* Reset button styling */
+.reset-button {
+    width: 100%; /* Make the button stretch to fit its column */
+    padding: 10px; /* Add padding for better appearance */
+    font-size: 14px; /* Adjust font size */
+    cursor: pointer; /* Add a pointer cursor on hover */
 }
 
-.dropdown {
-    margin-bottom: 10px;
-}
 
 /* Bar chart section */
 .bar-chart-section {
-    width: 70%;
+    width: 100%;
     display: inline-block;
     vertical-align: top;
 }
