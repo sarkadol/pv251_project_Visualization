@@ -33,6 +33,16 @@
     font-style: italic;
 }
 
+:root {
+    --yellow: #FCC11E; /* CMYK 0-27-90-0 */
+    --dark-yellow: #F9B200; /* CMYK 0-35-100-0 */
+    --darker-yellow: #F49E00; /* CMYK 0-45-100-0 */
+    --blue1: #294885; /* CMYK 85-67-0-25 */
+    --blue2: #255C9E; /* CMYK 85-60-0-10 */
+    --blue3: #336CAA; /* CMYK 80-52-0-7 */
+    --blue4: #3979B5; /* CMYK 77-45-0-5 */
+}
+
 p, label {
     font-family: 'TheMixSemiLight', sans-serif;
     font-size: 14px;
@@ -106,6 +116,7 @@ h1, h2, h3 {
     padding: 10px; /* Add padding for better appearance */
     font-size: 14px; /* Adjust font size */
     cursor: pointer; /* Add a pointer cursor on hover */
+    color: var(--yellow); /* Match header color */
 }
 
 

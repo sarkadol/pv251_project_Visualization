@@ -94,7 +94,7 @@ def register_callbacks(app, merged_dataframe):
         fig.update_traces(line=dict(width=3))
         fig.update_layout(
             xaxis=dict(dtick=1),
-            yaxis=dict(title="Regular Members",range=[0, y_max]),
+            yaxis=dict(title="# regular members",range=[0, y_max]),
             title_x=0.5,
             showlegend=False,
             transition_duration=2000,  # Smooth animation duration
@@ -188,8 +188,8 @@ def register_callbacks(app, merged_dataframe):
 
         # Update layout and formatting
         fig.update_layout(
-            xaxis_title="Age Group",
-            yaxis_title="Number of Members",
+            xaxis_title="Age group",
+            yaxis_title="# regular members",
             title_x=0.5,
             showlegend=False,  # Disable the legend
             bargap=0.1,  # Adjust space between bars (set closer to 0 to make bars wider)
