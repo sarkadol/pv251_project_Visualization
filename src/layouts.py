@@ -5,11 +5,37 @@ def create_layout(merged_dataframe):
         className="main-container",
         children=[
             html.H1("Scouts Data Visualization"),
+            # Right Section: About the Project
+            html.Div(
+                className="right-section",
+                children=[
+                    html.P([
+                        "This dashboard provides an interactive visualization of data provided by Junák - český skaut. ",
+                        "All the data are available online at ",
+                        html.A(
+                            "https://opendata.skaut.cz/",
+                            href="https://opendata.skaut.cz/",
+                            target="_blank",  # Opens the link in a new tab
+                            style={"color": "#3979B5", "text-decoration": "underline"}  # Optional: Style the link
+                        ),
+                        ". It allows users to explore trends, compare regions, and analyze age group distributions."
+                    ]),
+                    html.P([
+                        "Use the ", html.Strong("interactive controls"), " to select specific years and regions. "
+                                                                         "The visualizations include line charts, bar charts, and a treemap hierarchy for detailed insights."
+                    ]),
+                    html.P(
+                        "Scroll down to explore the hierarchical treemap, which shows the breakdown of participants "
+                        "by organizational units, such as regions, districts, and groups."
+                    )
+                ]
+            ),
             # Main Container for Line Chart and Information Section
             html.Div(
                 className="container",
                 style={"display": "flex", "flexDirection": "row", "alignItems": "stretch"},
                 children=[
+
                     # Left Section: Line Chart and Slider
                     html.Div(
                         className="left-section",
@@ -52,25 +78,8 @@ def create_layout(merged_dataframe):
                             )
                         ]
                     ),
-                    # Right Section: About the Project
-                    html.Div(
-                        className="right-section",
-                        children=[
-                            html.H2("About the Project"),
-                            html.P(
-                                "This dashboard provides an interactive visualization of scouting data. "
-                                "It allows users to explore trends, compare regions, and analyze age group distributions."
-                            ),
-                            html.P([
-                                "Use the ", html.Strong("interactive controls"), " to select specific years, regions, and datasets. "
-                                                                                 "The visualizations include line charts, bar charts, and a treemap hierarchy for detailed insights."
-                            ]),
-                            html.P(
-                                "Scroll down to explore the hierarchical treemap, which shows the breakdown of participants "
-                                "by organizational units, such as regions, districts, and groups."
-                            )
-                        ]
-                    )
+
+
                 ]
             ),
             # Dropdowns
@@ -160,6 +169,26 @@ def create_layout(merged_dataframe):
                         type="circle",
                         children=[
                             dcc.Graph(id='hierarchy-treemap')
+                        ]
+                    )
+                ]
+            ),
+            # Footer Section
+            html.Footer(
+                className="footer",
+                children=[
+                    html.Div(
+                        className="footer-content",
+                        children=[
+                            html.Img(
+                                src="SKAUT_logo.svg",
+                                alt="Scout Logo",
+                                className="scout-logo"
+                            ),
+                            html.P(
+                                "© 2025 Junák - český skaut. All rights reserved. Created by Šárka Blaško - Pizi for class PV251 Visualization, FI MUNI.",
+                                className="footer-text"
+                            )
                         ]
                     )
                 ]

@@ -9,7 +9,7 @@ data_directory = '../data'
 data_loader = DataLoader(data_directory)
 if(True):
     # use one already merged file
-    data_loader.load_merged_dataframe('../src/merged_dataframe.csv')
+    data_loader.load_merged_dataframe('./src/merged_dataframe.csv')
 else:
     # load a new csv or play with encoding
     dataframes = data_loader.load_all_csvs()  # Load datasets

@@ -1,15 +1,57 @@
+@font-face {
+    font-family: 'SkautBold';
+    src: url('./fonts/SKAUT-Bold.otf') format('opentype');
+    font-weight: bold;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'TheMixSemiLight';
+    src: url('./fonts/TheMixC5-4_SemiLight.otf') format('opentype');
+    font-weight: 400; /* Regular weight */
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'TheMixSemiLightItalic';
+    src: url('./fonts/TheMixC5-4iSemiLightIta.otf') format('opentype');
+    font-weight: 400; /* Regular weight */
+    font-style: italic;
+}
+
+@font-face {
+    font-family: 'TheMixBold';
+    src: url('./fonts/TheMixC5-7_Bold.otf') format('opentype');
+    font-weight: bold;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'TheMixBoldItalic';
+    src: url('./fonts/TheMixC5-7iBoldItalic.otf') format('opentype');
+    font-weight: bold;
+    font-style: italic;
+}
+
+p, label {
+    font-family: 'TheMixSemiLight', sans-serif;
+    font-size: 14px;
+    color: #333;
+}
+
 /* General styling */
 body {
     font-family: Arial, sans-serif;
     margin: 0;
-    padding: 0;
+    padding-left: 200px;
+    padding-right: 200px;
     background-color: #f9f9f9;
     color: #333;
 }
 
 /* Header styling */
 h1, h2, h3 {
-    font-family: Arial, sans-serif;
+    font-family: 'SkautBold', sans-serif;
     color: #3979B5;
     text-align: center;
     margin: 20px 0;
@@ -179,3 +221,55 @@ h1, h2, h3 {
 .slider-container .rc-slider-tooltip-arrow {
     color: #3979B5; /* Match tooltip background color */
 }
+
+/* Force font for all SVG text */
+.plotly text {
+    font-family: 'SkautBold', sans-serif !important;
+}
+
+/* Specific overrides for titles */
+.plotly .title {
+    font-family: 'SkautBold', sans-serif !important;
+    font-size: 18px;
+    fill: #3979B5; /* Set font color */
+}
+
+/* Axis labels */
+.plotly .xaxis-title, .plotly .yaxis-title {
+    font-family: 'TheMixSemiLight', sans-serif !important;
+    font-size: 14px;
+    fill: #244d6e;
+}
+
+/* Tick labels */
+.plotly .xtick text, .plotly .ytick text {
+    font-family: 'TheMixSemiLight', sans-serif !important;
+    font-size: 12px;
+    fill: #333;
+}
+
+/* Set white background for the chart */
+.plotly .bg {
+    fill: #ffffff !important; /* White background */
+}
+
+/* Set dark axes lines */
+.plotly .xaxis path,
+.plotly .yaxis path {
+    stroke: #000000 !important; /* Dark axes */
+    stroke-width: 1.5px !important;
+}
+
+/* Set gridline styles */
+.plotly .gridline {
+    stroke: #cccccc; /* Light gray gridlines */
+    stroke-width: 1px;
+    stroke-dasharray: 4; /* Dashed gridlines (optional) */
+}
+
+/* Set tick labels to dark */
+.plotly .xtick text,
+.plotly .ytick text {
+    fill: #000000 !important; /* Dark text for tick labels */
+}
+

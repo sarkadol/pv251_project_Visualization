@@ -87,7 +87,7 @@ def register_callbacks(app, merged_dataframe):
                 mode='markers',
                 marker=dict(size=12, color='red', symbol='circle')
             )
-        y_max = df_grouped['RegularMembers'].max() * 1.1 if not df_grouped.empty else 10  # Add 10% padding or use a default
+        y_max = df_grouped['RegularMembers'].max() * 1.2 if not df_grouped.empty else 10  # Add 10% padding or use a default
 
 
     # Ensure consistent x-axis and y-axis range
@@ -99,6 +99,8 @@ def register_callbacks(app, merged_dataframe):
             showlegend=False,
             transition_duration=2000,  # Smooth animation duration
         )
+
+
         return fig
     # Bar chart for age groups callback
     @app.callback(
@@ -130,7 +132,9 @@ def register_callbacks(app, merged_dataframe):
             selected_value = level1_value
         elif level0_value != 'ALL':
             selected_level = 'kraj'
+            level0_value_short = level0_value[:2]
             selected_value = level0_value
+
 
         # Filter the dataset if a specific level is selected
         if selected_value:
@@ -165,11 +169,10 @@ def register_callbacks(app, merged_dataframe):
 
         # Determine the dynamic title
         if level0_value == 'ALL' or not level0_value:
-            print("level0_value",level0_value)
             title = f"Age Group Distribution in {selected_year} (All Regions)"
         else:
             title = f"Age Group Distribution in {selected_year} ({unit_name})" if unit_name else f"Age Group Distribution in {selected_year} ({level0_value})"
-
+        print(title)
 
         # Create the bar chart
         fig = px.bar(
@@ -191,7 +194,8 @@ def register_callbacks(app, merged_dataframe):
             showlegend=False,  # Disable the legend
             bargap=0.1,  # Adjust space between bars (set closer to 0 to make bars wider)
             barmode='group',
-            transition_duration=2000,  # Smooth animation duration
+            #transition_duration=2000,  # Smooth animation duration
+            #title=title,
         )
 
         # Format hover labels and y-axis
@@ -201,6 +205,8 @@ def register_callbacks(app, merged_dataframe):
             textposition='outside',  # Place text above bars
             width=0.9  # Adjust the bar width
         )
+        #print("fig.layout.title.text",fig.layout.title.text)  # Ensure the title is as expected
+
 
         return fig
 
@@ -242,10 +248,10 @@ def register_callbacks(app, merged_dataframe):
         level3_value = level3_value if level3_value in [opt['value'] for opt in level3_options] else 'ALL'
 
         # Debugging output
-        print(f"Level0 Value: {level0_value_short}")
-        print(f"Level1 Value: {level1_value}")
-        print(f"Level2 Value: {level2_value}")
-        print(f"Level3 Value: {level3_value}")
+        #print(f"Level0 Value: {level0_value_short}")
+        #print(f"Level1 Value: {level1_value}")
+        #print(f"Level2 Value: {level2_value}")
+        #print(f"Level3 Value: {level3_value}")
 
         return level1_options, level2_options, level3_options, level1_value, level2_value, level3_value
 
@@ -337,8 +343,8 @@ def get_options(dataframe, current_level, parent_filters):
             filtered_dataframe = filtered_dataframe[filtered_dataframe[parent_level] == parent_value]
 
     # Debugging output
-    print(f"Filtered DataFrame for {current_level}:")
-    print(filtered_dataframe.head())
+    #print(f"Filtered DataFrame for {current_level}:")
+    #print(filtered_dataframe.head())
 
     # Generate options for the dropdown
     return [{'label': 'ALL', 'value': 'ALL'}] + [
