@@ -75,7 +75,16 @@ def register_callbacks(app, merged_dataframe):
             x='Year',
             y='RegularMembers',
             title=title,
-            labels={'Year': 'Year', 'RegularMembers': 'Regular Members'}
+            labels={'Year': 'Year', 'RegularMembers': 'Regular Members'},
+
+        )
+        # Add markers for all data points
+        fig.add_scatter(
+            x=df_grouped['Year'],
+            y=df_grouped['RegularMembers'],
+            mode='markers',
+            marker=dict(size=8, color='#3979B5', symbol='circle'),
+            name="Data Points"
         )
 
         # Highlight the selected year
@@ -85,13 +94,15 @@ def register_callbacks(app, merged_dataframe):
                 x=[selected_year],
                 y=[selected_year_value],
                 mode='markers',
-                marker=dict(size=12, color='red', symbol='circle')
+                marker=dict(size=14, color='#F49E00', symbol='circle')
             )
         y_max = df_grouped['RegularMembers'].max() * 1.2 if not df_grouped.empty else 10  # Add 10% padding or use a default
 
 
+
     # Ensure consistent x-axis and y-axis range
-        fig.update_traces(line=dict(width=3))
+        #fig.update_traces(line=dict(width=3))
+        fig.update_traces(line=dict(color='#3979B5', width=3))
         fig.update_layout(
             xaxis=dict(dtick=1),
             yaxis=dict(title="# regular members",range=[0, y_max]),

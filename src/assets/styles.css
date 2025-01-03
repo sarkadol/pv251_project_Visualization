@@ -295,3 +295,38 @@ h1, h2, h3 {
     fill: #000000 !important; /* Dark text for tick labels */
 }
 
+.yellow-box {
+    background-color: #FCC11E; /* Light green background */
+    padding: 20px;
+    border-radius: 5px;
+    margin-top: 20px;
+}
+
+/* Custom Tooltip Styling */
+.year-slider .rc-slider-tooltip {
+    background-color: var(--blue4); /* Match scout style */
+    color: #ffffff; /* White text for contrast */
+    border-radius: 8px; /* Rounded corners */
+    font-weight: bold; /* Bold text */
+    font-size: 14px; /* Adjust font size */
+    padding: 5px 10px; /* Add padding inside the tooltip */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Subtle shadow for better visibility */
+}
+
+/* Tooltip Arrow */
+.year-slider .rc-slider-tooltip-arrow {
+    color: var(--blue4); /* Match tooltip background color */
+}
+/* Slider Track (background line) */
+.slider-container .rc-slider-rail {
+    background-color: var(--blue4); /* Match header color */
+    height: 4px; /* Increase the height to make the line wider */
+    border-radius: 5px; /* Adjust border radius if needed */
+}
+
+.blue-box {
+    background-color: #E0F7FA; /* Light blue background */
+    padding: 20px;
+    border-radius: 5px;
+    margin-top: 20px;
+}
