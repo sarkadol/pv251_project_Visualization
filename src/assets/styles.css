@@ -107,7 +107,7 @@ h1, h2, h3 {
     min-width: 150px; /* Ensure dropdowns don't shrink too much */
     display: flex;
     flex-direction: column; /* Stack label and dropdown vertically */
-    gap: 5px; /* Space between label and dropdown */
+    justify-content: flex-end; /* Align items to the bottom */
 }
 
 /* Reset button styling */
@@ -115,54 +115,13 @@ h1, h2, h3 {
     width: 100%; /* Make the button stretch to fit its column */
     padding: 10px; /* Add padding for better appearance */
     font-size: 14px; /* Adjust font size */
+    color: #ffffff;
     cursor: pointer; /* Add a pointer cursor on hover */
-    color: var(--yellow); /* Match header color */
-}
+    background-color: var(--blue3); /* Match header color */
+    border-radius: 8px; /* Rounded corners */
+    border: none; /* Remove default button border */
+    margin-top: auto; /* Push the button to the bottom */
 
-
-/* Bar chart section */
-.bar-chart-section {
-    width: 100%;
-    display: inline-block;
-    vertical-align: top;
-}
-
-/* Treemap section */
-.treemap-section {
-    margin-top: 20px;
-}
-
-/* Container for line chart and info section */
-.container {
-    display: flex;
-    flex-direction: row;
-    align-items: stretch;
-}
-
-/* Left section: Line chart and slider */
-.left-section {
-    flex: 2;
-}
-
-/* Right section: Info text */
-.right-section {
-    flex: 1;
-    padding-left: 20px;
-}
-/* Reset Button */
-.reset-button {
-    display: inline-block;
-    margin: 20px auto;
-    padding: 10px 20px;
-    background-color: #3979B5; /* Match header color */
-    color: #fff;
-    font-weight: bold;
-    font-size: 14px;
-    text-align: center;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
 }
 
 .reset-button:hover {
@@ -170,7 +129,7 @@ h1, h2, h3 {
 }
 
 .reset-button:active {
-    background-color: #244d6e; /* Even darker when pressed */
+    background-color: var(--blue2); /* Even darker when pressed */
 }
 
 .reset-button:disabled {
@@ -178,6 +137,7 @@ h1, h2, h3 {
     color: #666;
     cursor: not-allowed;
 }
+
 /* Slider Container Styling */
 .slider-container {
     margin: 20px auto;
@@ -317,6 +277,7 @@ h1, h2, h3 {
 .year-slider .rc-slider-tooltip-arrow {
     color: var(--blue4); /* Match tooltip background color */
 }
+
 /* Slider Track (background line) */
 .slider-container .rc-slider-rail {
     background-color: var(--blue4); /* Match header color */
@@ -325,7 +286,7 @@ h1, h2, h3 {
 }
 
 .blue-box {
-    background-color: #E0F7FA; /* Light blue background */
+    background-color:#8AB8E0; /* Lighter blue4 color */
     padding: 20px;
     border-radius: 5px;
     margin-top: 20px;
