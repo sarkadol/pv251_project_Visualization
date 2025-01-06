@@ -4,6 +4,9 @@ import plotly.express as px
 import pandas as pd
 import plotly.graph_objects as go
 
+from dash import callback_context
+
+
 pestra_palette = [
     "#FFCC00", "#EE8027", "#E53434", "#A0067D", "#5E2281",
     "#172983", "#007BC2", "#89BA17"
@@ -241,35 +244,49 @@ def register_callbacks(app, merged_dataframe):
         ]
     )
     def update_dropdowns(level0_value, level1_value, level2_value, level3_value):
-        # Adjust higher levels based on the selected lower level
-        if level3_value != 'ALL':
-            level2_value = get_stredisko_for_oddil( level3_value)
-            level1_value = get_okres_for_stredisko( level2_value)
-            level0_value = get_kraj_for_okres( level1_value)
-        elif level2_value != 'ALL':
-            level1_value = get_okres_for_stredisko( level2_value)
-            level0_value = get_kraj_for_okres( level1_value)
-        elif level1_value != 'ALL':
-            level0_value = get_kraj_for_okres( level1_value)
+        # Example usage in a callback
+        ctx = callback_context
+        if not ctx.triggered:
+            most_recently_clicked = None
+        else:
+            most_recently_clicked = ctx.triggered[0]['prop_id'].split('.')[0]
 
+        print(f"Most recently clicked dropdown: {most_recently_clicked}")
+
+        # Adjust higher levels based on the selected lower level
+        if most_recently_clicked == 'level0-dropdown':
+            level1_value = 'ALL'
+            level2_value = 'ALL'
+            level3_value = 'ALL'
+        if most_recently_clicked == 'level1-dropdown':
+            if level1_value != 'ALL':
+                level0_value = get_kraj_for_okres( level1_value)
+            level2_value = 'ALL'
+            level3_value = 'ALL'
+        if most_recently_clicked == 'level2-dropdown':
+            if level2_value != 'ALL':
+                level1_value = get_okres_for_stredisko(level2_value)
+                level0_value = get_kraj_for_okres( level1_value)
+            level3_value = 'ALL'
+        if most_recently_clicked == 'level3-dropdown':
+            if level3_value != 'ALL':
+                level2_value = get_stredisko_for_oddil( level3_value)
+                level1_value = get_okres_for_stredisko( level2_value)
+                level0_value = get_kraj_for_okres( level1_value)
 
         level0_value_short = level0_value[:2]  # Ensure the top-level value is shortened to match
-        print(f"Update dropdowns: level0: {level0_value}, Level1: {level1_value}, Level2: {level2_value}, Level3: {level3_value}")
+        print(f"Update dropdowns BEGINNING: level0: {level0_value}, Level1: {level1_value}, Level2: {level2_value}, Level3: {level3_value}")
 
         # Filters dictionary for cascading filtering
         filters = {'LevelKraj': level0_value_short, 'LevelOkres': level1_value, 'LevelStredisko': level2_value}
 
         # Update Level 1 (Okres) options based on LevelKraj
         level1_options = get_options(merged_dataframe, current_level='LevelOkres', parent_filters={'LevelKraj': level0_value_short})
-        level1_value = level1_value if level1_value in [opt['value'] for opt in level1_options] else 'ALL'
-
-        # Update Level 2 (Stredisko) options based on LevelKraj and LevelOkres
         level2_options = get_options(merged_dataframe, current_level='LevelStredisko', parent_filters={'LevelKraj': level0_value_short, 'LevelOkres': level1_value})
-        level2_value = level2_value if level2_value in [opt['value'] for opt in level2_options] else 'ALL'
-
-        # Update Level 3 (Oddil) options based on all parent levels
         level3_options = get_options(merged_dataframe, current_level='LevelOddil', parent_filters=filters)
-        level3_value = level3_value if level3_value in [opt['value'] for opt in level3_options] else 'ALL'
+
+
+        print(f"Update dropdowns END: level0: {level0_value}, Level1: {level1_value}, Level2: {level2_value}, Level3: {level3_value}")
 
         return level0_value, level1_options, level2_options, level3_options, level1_value, level2_value, level3_value
 
