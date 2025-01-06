@@ -17,6 +17,7 @@ else:
 
 merged_dataframe = data_loader.get_merged_dataframe()
 merged_dataframe = add_hierarchy_levels(merged_dataframe)
+merged_dataframe = add_hierarchy_levels_whole(merged_dataframe) #needed for treemap
 
 # Initialize Dash app
 app = Dash(__name__, assets_folder='assets')

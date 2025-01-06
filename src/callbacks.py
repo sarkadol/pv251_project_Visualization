@@ -6,6 +6,7 @@ import plotly.graph_objects as go
 
 from dash import callback_context
 
+from src.utils import add_hierarchy_levels_whole
 
 pestra_palette = [
     "#FFCC00", "#EE8027", "#E53434", "#A0067D", "#5E2281",
@@ -292,34 +293,54 @@ def register_callbacks(app, merged_dataframe):
 
     @app.callback(
         Output('hierarchy-treemap', 'figure'),
-        Input('loading-hierarchy-treemap', 'children')  # Placeholder trigger
+        [Input('loading-hierarchy-treemap', 'children'),  # Placeholder trigger
+        Input('year-slider', 'value')]
     )
-    def generate_dynamic_treemap(_):
+    def generate_dynamic_treemap(_,selected_year):
         """
         Create a static hierarchy treemap from the DataFrame with renamed hierarchy levels.
         """
-        # Validate DataFrame columns
-        if 'LevelKraj' not in merged_dataframe.columns or 'RegularMembers' not in merged_dataframe.columns:
-            raise ValueError("Merged DataFrame missing required columns: 'LevelKraj' or 'RegularMembers'")
+        df = merged_dataframe.copy()
 
-        # Debug DataFrame preview
-        #print("Merged DataFrame Preview:")
-        #print(merged_dataframe[['LevelKraj', 'LevelOkres', 'LevelStredisko', 'LevelOddil', 'LevelDruzina',
-        #                        'UnitName', 'RegularMembers']].head())
+        hierarchy_levels = [px.Constant("all"),'LevelKrajWhole', 'LevelOkresWhole', 'LevelStrediskoWhole', 'LevelOddilWhole', 'LevelDruzinaWhole']
+        value_column = "RegularMembers"
 
-        # Create the treemap with renamed levels
+        df = df.dropna(subset=['RegularMembers'])  # Drop NaN values
+        df = df[df['RegularMembers'] > 0]  # Drop zero values
+        #print(merged_dataframe.to_string())
+        #print(merged_dataframe['UnitName'])
+        df = df[df['Year'] == selected_year]
+        df = df[~df['ID_UnitType'].isin(['ustredi', 'zvlastniJednotka'])]
+
+        if 'UnitName' not in df.columns:
+            raise ValueError("Column 'UnitName' not found in the dataset")
+        # Define the color palette with 14 colors
+        # Define the color palette with 14 colors
+        logo_palette = [
+            "#D4B66D", "#B85637", "#A21F16", "#732813", "#5D4716",
+            "#8D5F0F", "#48651D", "#5C748C"
+        ]
+
+        # Create the treemap
         fig = px.treemap(
-            merged_dataframe,
-            path=[px.Constant("All"), 'LevelKraj', 'LevelOkres', 'LevelStredisko', 'LevelOddil', 'LevelDruzina'],
-            values='RegularMembers',  # Use 'RegularMembers' column for sizes
-            hover_data=['UnitName'],      # UnitName will show in hover tooltips
-            custom_data=['UnitName']      # Pass UnitName for custom text
+            df,
+            path=hierarchy_levels,  # Hierarchy levels
+            values=value_column,    # Size of nodes
+            title="Hierarchical Treemap",
+            labels=df['UnitName'],  # Custom
+            custom_data=[df['UnitName']],  # Custom
+            color_discrete_sequence=logo_palette  # Apply the custom color palette
         )
 
-        # Update to show UnitName as text
+        # Customize hover template and texttemplate
         fig.update_traces(
-            texttemplate='%{customdata}',  # Use UnitName for all labels
-            hovertemplate='<b>%{customdata}</b><br>Value: %{value}'
+            root_color="lightgrey",
+            hovertemplate="<b>%{customdata[0]}</b><br>"
+                          "Members: %{value}<br>"
+                          "<extra></extra>",
+            text=df['UnitName'],
+            texttemplate="<b>%{customdata[0]}</b><br>",
+            marker=dict(cornerradius=5)
         )
 
         return fig
