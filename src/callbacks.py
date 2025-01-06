@@ -243,14 +243,14 @@ def register_callbacks(app, merged_dataframe):
     def update_dropdowns(level0_value, level1_value, level2_value, level3_value):
         # Adjust higher levels based on the selected lower level
         if level3_value != 'ALL':
-            level2_value = get_stredisko_for_oddil(merged_dataframe, level3_value)
-            level1_value = get_okres_for_stredisko(merged_dataframe, level2_value)
-            level0_value = get_kraj_for_okres(merged_dataframe, level1_value)
+            level2_value = get_stredisko_for_oddil( level3_value)
+            level1_value = get_okres_for_stredisko( level2_value)
+            level0_value = get_kraj_for_okres( level1_value)
         elif level2_value != 'ALL':
-            level1_value = get_okres_for_stredisko(merged_dataframe, level2_value)
-            level0_value = get_kraj_for_okres(merged_dataframe, level1_value)
+            level1_value = get_okres_for_stredisko( level2_value)
+            level0_value = get_kraj_for_okres( level1_value)
         elif level1_value != 'ALL':
-            level0_value = get_kraj_for_okres(merged_dataframe, level1_value)
+            level0_value = get_kraj_for_okres( level1_value)
 
 
         level0_value_short = level0_value[:2]  # Ensure the top-level value is shortened to match
@@ -363,62 +363,23 @@ def get_options(dataframe, current_level, parent_filters):
             else:
                 filtered_dataframe = filtered_dataframe[filtered_dataframe[parent_level] == parent_value]
 
-    # Handle the case where level3 value is in the format XXX.YY
-
-
-    # Debugging output
-    #print(f"Filtered DataFrame for {current_level}:")
-    #print(filtered_dataframe.head())
-
     # Generate options for the dropdown
     return [{'label': 'ALL', 'value': 'ALL'}] + [
         {'label': name, 'value': id_}
         for id_, name in filtered_dataframe[['RegistrationNumber', 'UnitName']].drop_duplicates().values
     ]
 
-def get_kraj_for_okres(dataframe, okres_value):
-    """
-    Get the corresponding 'kraj' for a given 'okres'.
-
-    Args:
-        dataframe (pd.DataFrame): The dataframe containing the hierarchical data.
-        okres_value (str): The value of the 'okres' level.
-
-    Returns:
-        str: The corresponding 'kraj' value.
-    """
-    # level1 e.g. 112 (okres value)
+def get_kraj_for_okres( okres_value):
 
     kraj_value = okres_value[:2] + '0'
     return kraj_value
 
-def get_okres_for_stredisko(dataframe, stredisko_value):
-    """
-    Get the corresponding 'okres' for a given 'stredisko'.
+def get_okres_for_stredisko(stredisko_value):
 
-    Args:
-        dataframe (pd.DataFrame): The dataframe containing the hierarchical data.
-        stredisko_value (str): The value of the 'stredisko' level.
-
-    Returns:
-        str: The corresponding 'okres' value.
-    """
-    print("stredisko_value",stredisko_value)
     okres_value = stredisko_value[:3]
-    print("okres_value",okres_value)
     return okres_value
 
-def get_stredisko_for_oddil(dataframe, oddil_value):
-    """
-    Get the corresponding 'stredisko' for a given 'oddil'.
+def get_stredisko_for_oddil(oddil_value):
 
-    Args:
-        dataframe (pd.DataFrame): The dataframe containing the hierarchical data.
-        oddil_value (str): The value of the 'oddil' level.
-
-    Returns:
-        str: The corresponding 'stredisko' value.
-    """
-    print("oddil_value",oddil_value)
     stredisko_value = oddil_value[:6]
     return stredisko_value
