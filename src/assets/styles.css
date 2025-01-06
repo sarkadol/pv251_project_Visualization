@@ -291,3 +291,10 @@ h1, h2, h3 {
     border-radius: 5px;
     margin-top: 20px;
 }
+
+/* Set gridline styles */
+.plotly .gridline {
+    stroke: #000000 !important; /* Light gray gridlines */
+    stroke-width: 1px;
+    stroke-dasharray: 4; /* Dashed gridlines (optional) */
+}

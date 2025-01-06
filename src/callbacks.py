@@ -108,7 +108,6 @@ def register_callbacks(app, merged_dataframe):
             yaxis=dict(title="# regular members",range=[0, y_max]),
             title_x=0.5,
             showlegend=False,
-            transition_duration=2000,  # Smooth animation duration
         )
 
 
@@ -226,6 +225,7 @@ def register_callbacks(app, merged_dataframe):
 
     @app.callback(
         [
+            Output('level0-dropdown', 'value'),
             Output('level1-dropdown', 'options'),
             Output('level2-dropdown', 'options'),
             Output('level3-dropdown', 'options'),
@@ -241,9 +241,20 @@ def register_callbacks(app, merged_dataframe):
         ]
     )
     def update_dropdowns(level0_value, level1_value, level2_value, level3_value):
-        # Filter for LevelKraj
+        # Adjust higher levels based on the selected lower level
+        if level3_value != 'ALL':
+            level2_value = get_stredisko_for_oddil(merged_dataframe, level3_value)
+            level1_value = get_okres_for_stredisko(merged_dataframe, level2_value)
+            level0_value = get_kraj_for_okres(merged_dataframe, level1_value)
+        elif level2_value != 'ALL':
+            level1_value = get_okres_for_stredisko(merged_dataframe, level2_value)
+            level0_value = get_kraj_for_okres(merged_dataframe, level1_value)
+        elif level1_value != 'ALL':
+            level0_value = get_kraj_for_okres(merged_dataframe, level1_value)
+
+
         level0_value_short = level0_value[:2]  # Ensure the top-level value is shortened to match
-        # level0value for ALL is then AL - solved, made problems in get_options
+        print(f"Update dropdowns: level0: {level0_value}, Level1: {level1_value}, Level2: {level2_value}, Level3: {level3_value}")
 
         # Filters dictionary for cascading filtering
         filters = {'LevelKraj': level0_value_short, 'LevelOkres': level1_value, 'LevelStredisko': level2_value}
@@ -260,13 +271,7 @@ def register_callbacks(app, merged_dataframe):
         level3_options = get_options(merged_dataframe, current_level='LevelOddil', parent_filters=filters)
         level3_value = level3_value if level3_value in [opt['value'] for opt in level3_options] else 'ALL'
 
-        # Debugging output
-        #print(f"Level0 Value: {level0_value_short}")
-        #print(f"Level1 Value: {level1_value}")
-        #print(f"Level2 Value: {level2_value}")
-        #print(f"Level3 Value: {level3_value}")
-
-        return level1_options, level2_options, level3_options, level1_value, level2_value, level3_value
+        return level0_value, level1_options, level2_options, level3_options, level1_value, level2_value, level3_value
 
     @app.callback(
         Output('hierarchy-treemap', 'figure'),
@@ -281,9 +286,9 @@ def register_callbacks(app, merged_dataframe):
             raise ValueError("Merged DataFrame missing required columns: 'LevelKraj' or 'RegularMembers'")
 
         # Debug DataFrame preview
-        print("Merged DataFrame Preview:")
-        print(merged_dataframe[['LevelKraj', 'LevelOkres', 'LevelStredisko', 'LevelOddil', 'LevelDruzina',
-                                'UnitName', 'RegularMembers']].head())
+        #print("Merged DataFrame Preview:")
+        #print(merged_dataframe[['LevelKraj', 'LevelOkres', 'LevelStredisko', 'LevelOddil', 'LevelDruzina',
+        #                        'UnitName', 'RegularMembers']].head())
 
         # Create the treemap with renamed levels
         fig = px.treemap(
@@ -353,13 +358,10 @@ def get_options(dataframe, current_level, parent_filters):
     # Apply all parent-level filters
     for parent_level, parent_value in parent_filters.items():
         if parent_value not in ['ALL', 'AL']:
-            print(parent_level == 'LevelStredisko','parent_level == LevelStredisko')
             if parent_level == 'LevelStredisko':
                 filtered_dataframe = filtered_dataframe[filtered_dataframe['RegistrationNumber'].str.contains(parent_filters['LevelStredisko'], na=False)]
             else:
                 filtered_dataframe = filtered_dataframe[filtered_dataframe[parent_level] == parent_value]
-            print("parent_level",parent_level,"parent_value",parent_value)
-            print(filtered_dataframe)
 
     # Handle the case where level3 value is in the format XXX.YY
 
@@ -373,3 +375,50 @@ def get_options(dataframe, current_level, parent_filters):
         {'label': name, 'value': id_}
         for id_, name in filtered_dataframe[['RegistrationNumber', 'UnitName']].drop_duplicates().values
     ]
+
+def get_kraj_for_okres(dataframe, okres_value):
+    """
+    Get the corresponding 'kraj' for a given 'okres'.
+
+    Args:
+        dataframe (pd.DataFrame): The dataframe containing the hierarchical data.
+        okres_value (str): The value of the 'okres' level.
+
+    Returns:
+        str: The corresponding 'kraj' value.
+    """
+    # level1 e.g. 112 (okres value)
+
+    kraj_value = okres_value[:2] + '0'
+    return kraj_value
+
+def get_okres_for_stredisko(dataframe, stredisko_value):
+    """
+    Get the corresponding 'okres' for a given 'stredisko'.
+
+    Args:
+        dataframe (pd.DataFrame): The dataframe containing the hierarchical data.
+        stredisko_value (str): The value of the 'stredisko' level.
+
+    Returns:
+        str: The corresponding 'okres' value.
+    """
+    print("stredisko_value",stredisko_value)
+    okres_value = stredisko_value[:3]
+    print("okres_value",okres_value)
+    return okres_value
+
+def get_stredisko_for_oddil(dataframe, oddil_value):
+    """
+    Get the corresponding 'stredisko' for a given 'oddil'.
+
+    Args:
+        dataframe (pd.DataFrame): The dataframe containing the hierarchical data.
+        oddil_value (str): The value of the 'oddil' level.
+
+    Returns:
+        str: The corresponding 'stredisko' value.
+    """
+    print("oddil_value",oddil_value)
+    stredisko_value = oddil_value[:6]
+    return stredisko_value
