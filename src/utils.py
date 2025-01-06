@@ -19,3 +19,20 @@ def add_hierarchy_levels(df):
 
 
     return df
+
+def add_hierarchy_levels_whole(df):
+    """
+    Add hierarchy level columns to the DataFrame based on the RegistrationNumber column.
+    """
+    # Ensure RegistrationNumber is a string
+    df['RegistrationNumber'] = df['RegistrationNumber'].fillna('').astype(str)
+
+    # Extract hierarchy levels
+    df['LevelKrajWhole'] = df['RegistrationNumber'].apply(lambda x: x[:2] if len(x) > 0 else 'Unknown')
+    df['LevelOkresWhole'] = df['RegistrationNumber'].apply(lambda x: x[:3] if len(x) > 0 else 'Unknown')
+    df['LevelStrediskoWhole'] = df['RegistrationNumber'].apply(lambda x: x[:6] if len(x) > 0 else 'Unknown')
+    df['LevelOddilWhole'] = df['RegistrationNumber'].apply(lambda x: x[:10] if len(x) > 0 else 'Unknown')
+    df['LevelDruzinaWhole'] = df['RegistrationNumber'].fillna('Unknown')
+
+
+    return df
