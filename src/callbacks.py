@@ -29,7 +29,7 @@ def register_callbacks(app, merged_dataframe):
 
         # Debug print
         #print(f"Selected year: {selected_year}")
-        print(f"Level0: {level0_value}, Level1: {level1_value}, Level2: {level2_value}, Level3: {level3_value}")
+        print(f"Line chart      : level0: {level0_value}, Level1: {level1_value}, Level2: {level2_value}, Level3: {level3_value}")
 
         # Determine the most specific level to use
         selected_level = None
@@ -126,6 +126,8 @@ def register_callbacks(app, merged_dataframe):
     )
     def update_bar_chart(selected_year, level0_value, level1_value, level2_value, level3_value):
         # Start with the full dataset
+        print(f"Bar chart       : level0: {level0_value}, Level1: {level1_value}, Level2: {level2_value}, Level3: {level3_value}")
+
         df = merged_dataframe.copy()
 
         # Determine the most specific level to use
@@ -351,7 +353,16 @@ def get_options(dataframe, current_level, parent_filters):
     # Apply all parent-level filters
     for parent_level, parent_value in parent_filters.items():
         if parent_value not in ['ALL', 'AL']:
-            filtered_dataframe = filtered_dataframe[filtered_dataframe[parent_level] == parent_value]
+            print(parent_level == 'LevelStredisko','parent_level == LevelStredisko')
+            if parent_level == 'LevelStredisko':
+                filtered_dataframe = filtered_dataframe[filtered_dataframe['RegistrationNumber'].str.contains(parent_filters['LevelStredisko'], na=False)]
+            else:
+                filtered_dataframe = filtered_dataframe[filtered_dataframe[parent_level] == parent_value]
+            print("parent_level",parent_level,"parent_value",parent_value)
+            print(filtered_dataframe)
+
+    # Handle the case where level3 value is in the format XXX.YY
+
 
     # Debugging output
     #print(f"Filtered DataFrame for {current_level}:")
