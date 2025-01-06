@@ -2,7 +2,7 @@ from dash import Dash
 from DataLoader import DataLoader
 from layouts import create_layout
 from callbacks import register_callbacks
-from utils import add_hierarchy_levels
+from utils import add_hierarchy_levels,add_hierarchy_levels_whole
 
 # Initialize DataLoader
 data_directory = '../data'
