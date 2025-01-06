@@ -316,20 +316,17 @@ def register_callbacks(app, merged_dataframe):
             raise ValueError("Column 'UnitName' not found in the dataset")
         # Define the color palette with 14 colors
         # Define the color palette with 14 colors
-        logo_palette = [
-            "#D4B66D", "#B85637", "#A21F16", "#732813", "#5D4716",
-            "#8D5F0F", "#48651D", "#5C748C"
-        ]
+
 
         # Create the treemap
         fig = px.treemap(
             df,
             path=hierarchy_levels,  # Hierarchy levels
             values=value_column,    # Size of nodes
-            title="Hierarchical Treemap",
+            title="Hierarchical Treemap in " + str(selected_year),
             labels=df['UnitName'],  # Custom
             custom_data=[df['UnitName']],  # Custom
-            color_discrete_sequence=logo_palette  # Apply the custom color palette
+            color_discrete_sequence=pestra_palette  # Apply the custom color palette
         )
 
         # Customize hover template and texttemplate
@@ -338,10 +335,13 @@ def register_callbacks(app, merged_dataframe):
             hovertemplate="<b>%{customdata[0]}</b><br>"
                           "Members: %{value}<br>"
                           "<extra></extra>",
-            text=df['UnitName'],
-            texttemplate="<b>%{customdata[0]}</b><br>",
-            marker=dict(cornerradius=5)
+            marker=dict(cornerradius=5),
+
         )
+        fig.update_layout(
+            margin=dict(t=60,l=10, r=10, b=10)  # Reduce top, left, right, and bottom margins
+        )
+
 
         return fig
 

@@ -200,20 +200,23 @@ def create_layout(merged_dataframe):
             ),
             # Treemap Section
             html.Hr(),
-            html.Div(id="treemap-trigger"),
             html.Div(
-                className="treemap-section",
-                children=[
-                    html.H3("Hierarchy - Treemap"),
-                    dcc.Loading(
-                        id="loading-hierarchy-treemap",
-                        type="circle",
-                        children=[
-                            dcc.Graph(id='hierarchy-treemap')
-                        ]
-                    )
-                ]
-            ),
+                className='blue-box',
+                style={"flex": 1},
+                children=[html.Div(id="treemap-trigger"),
+                          html.Div(
+                              className="treemap-section",
+                              children=[
+                                  dcc.Loading(
+                                      id="loading-hierarchy-treemap",
+                                      type="circle",
+                                      children=[
+                                          dcc.Graph(id='hierarchy-treemap')
+                                      ]
+                                  )
+                              ]
+                          ),]),
+
             # Footer Section
             html.Footer(
                 className="footer",
