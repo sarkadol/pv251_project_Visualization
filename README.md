@@ -1,6 +1,8 @@
 # Scouts Data Visualization Dashboard
 
-This project is a data visualization dashboard for Scouts data provided by Junák - český skaut. The dashboard allows users to explore trends, compare regions, and analyze age group distributions using interactive controls.
+This repository contains a project for the course [PV251 - Visualization](https://is.muni.cz/course/fi/autumn2024/PV251) at FI MUNI (Autumn 2024).
+
+The project is an interactive data visualization dashboard built using Dash and Python. It visualizes Scouts data provided by Junák - český skaut, allowing users to explore trends, compare regions, and analyze age group distributions using interactive controls.
 
 ## Features
 
